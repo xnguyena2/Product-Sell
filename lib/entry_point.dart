@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'compoment/main_bars.dart';
+import 'component/list_product.dart';
+import 'component/main_bars.dart';
+import 'component/search_bar.dart';
 import 'constants.dart';
 
 class EntryPoint extends StatelessWidget {
@@ -13,13 +15,19 @@ class EntryPoint extends StatelessWidget {
         bottomNavigationBar: Container(
           padding: const EdgeInsets.all(4),
           // margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            color: backgroundColor2.withOpacity(0.8),
+          decoration: const BoxDecoration(
+            color: dartBackgroundColor,
             // borderRadius: const BorderRadius.all(Radius.circular(24)),
           ),
           child: const MainBars(),
         ),
-        body: Container(),
+        body: const Column(
+          verticalDirection: VerticalDirection.up,
+          children: [
+            ListProduct(),
+            SearchButton(),
+          ],
+        ),
       ),
     );
   }

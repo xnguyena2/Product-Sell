@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-const Color backgroundColor2 = Color(0xFF17203A);
-const Color backgroundColorLight = Color(0xFFF2F6FF);
-const Color backgroundColorDark = Color(0xFF25254B);
-const Color shadowColorLight = Color(0xFF4A5367);
+const Color backgroundColor = Color(0xFFF4F4F4);
+const Color secondBackgroundColor = Colors.white;
+const Color dartBackgroundColor = Colors.black;
+const Color highlightColor = Color(0xFF21c712);
+const Color shadowColor = Color(0xFF4A5367);
 const Color shadowColorDark = Colors.black;
+const Color secondTextColor = Color(0xFF8B8B8B);

@@ -32,7 +32,6 @@ class _MainBarsState extends State<MainBars> {
       children: [
         IconButton(
           onPressed: () {
-            print("Home click!");
             setState(() {
               btnActive = index;
             });
@@ -41,14 +40,14 @@ class _MainBarsState extends State<MainBars> {
         ),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
-          curve: Curves.bounceIn,
+          curve: Curves.bounceOut,
           child: Container(
-            margin: const EdgeInsets.only(top: 3),
+            // margin: const EdgeInsets.only(top: 3),
             width: btnActive == index ? 15 : 0,
             height: 3,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(2)),
-              color: Colors.red.withOpacity(0.8),
+              color: highlightColor.withOpacity(0.8),
             ),
           ),
         ),
