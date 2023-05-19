@@ -1,40 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../global/app_state.dart';
 import '../constants.dart';
+import '../page/page_index.dart';
+
+typedef SwitchPage = void Function(PageIndex);
 
 class MainBars extends StatefulWidget {
+  final SwitchPage switchPage;
+  final PageIndex pageIndex;
   const MainBars({
     super.key,
+    required this.switchPage,
+    required this.pageIndex,
   });
 
   @override
-  State<MainBars> createState() => _MainBarsState();
+  State<MainBars> createState() => MainBarsState();
 }
 
-class _MainBarsState extends State<MainBars> {
-  int btnActive = 0;
+class MainBarsState extends State<MainBars> {
+  late PageIndex btnActive;
+
   @override
   Widget build(BuildContext context) {
+    btnActive = widget.pageIndex;
+    var appState = context.read<MyAppState>();
+    appState.switchSearchPage = () {
+      switchPage(PageIndex.search);
+    };
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        newIconBar(0, "assets/icons/Home.png"),
-        newIconBar(1, "assets/icons/Category.png"),
-        newIconBar(2, "assets/icons/Package.png"),
-        newIconBar(3, "assets/icons/Profile.png"),
+        newIconBar(PageIndex.home, "assets/icons/Home.png"),
+        newIconBar(PageIndex.search, "assets/icons/SearchBar.png"),
+        newIconBar(PageIndex.package, "assets/icons/Package.png"),
+        newIconBar(PageIndex.profile, "assets/icons/Profile.png"),
       ],
     );
   }
 
-  Stack newIconBar(int index, String path) {
+  switchPage(PageIndex index) {
+    widget.switchPage(index);
+  }
+
+  Stack newIconBar(PageIndex index, String path) {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
         IconButton(
           onPressed: () {
-            setState(() {
-              btnActive = index;
-            });
+            switchPage(index);
           },
           icon: Image.asset(path),
         ),

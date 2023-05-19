@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class SearchButton extends StatelessWidget {
+  final VoidCallback searchPress;
   const SearchButton({
     super.key,
+    required this.searchPress,
   });
 
   @override
@@ -25,25 +27,28 @@ class SearchButton extends StatelessWidget {
           ),
         ],
       ),
-      child: Container(
-        height: 40,
-        padding: const EdgeInsets.only(left: 20),
-        decoration: const BoxDecoration(
-          color: secondBackgroundColor,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Row(
-          children: [
-            Image.asset("assets/icons/Search.png"),
-            const SizedBox(width: 20),
-            const Text(
-              "Search Product",
-              style: TextStyle(
-                color: secondTextColor,
-                fontSize: 16,
+      child: GestureDetector(
+        onTap: searchPress,
+        child: Container(
+          height: 40,
+          padding: const EdgeInsets.only(left: 20),
+          decoration: const BoxDecoration(
+            color: secondBackgroundColor,
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+          ),
+          child: Row(
+            children: [
+              Image.asset("assets/icons/Search.png"),
+              const SizedBox(width: 20),
+              const Text(
+                "Search Product",
+                style: TextStyle(
+                  color: secondTextColor,
+                  fontSize: 16,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

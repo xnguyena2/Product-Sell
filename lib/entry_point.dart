@@ -1,15 +1,34 @@
 import 'package:flutter/material.dart';
 
-import 'component/list_product.dart';
 import 'component/main_bars.dart';
-import 'component/search_bar.dart';
 import 'constants.dart';
+import 'page/home.dart';
+import 'page/page_index.dart';
 
-class EntryPoint extends StatelessWidget {
+class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
 
   @override
+  State<EntryPoint> createState() => _EntryPointState();
+}
+
+class _EntryPointState extends State<EntryPoint> {
+  PageIndex currentPage = PageIndex.home;
+
+  @override
   Widget build(BuildContext context) {
+    Widget page;
+    switch (currentPage) {
+      case PageIndex.home:
+        page = const HomePage();
+        break;
+      case PageIndex.search:
+      default:
+        page = const Placeholder();
+        break;
+      // default:
+      //   throw UnimplementedError('no widget for $currentPage');
+    }
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: Container(
@@ -19,15 +38,16 @@ class EntryPoint extends StatelessWidget {
             color: dartBackgroundColor,
             // borderRadius: const BorderRadius.all(Radius.circular(24)),
           ),
-          child: const MainBars(),
+          child: MainBars(
+            switchPage: (pageIndex) {
+              setState(() {
+                currentPage = pageIndex;
+              });
+            },
+            pageIndex: currentPage,
+          ),
         ),
-        body: const Column(
-          verticalDirection: VerticalDirection.up,
-          children: [
-            ListProduct(),
-            SearchButton(),
-          ],
-        ),
+        body: page,
       ),
     );
   }

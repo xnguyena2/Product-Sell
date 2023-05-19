@@ -10,7 +10,7 @@ class ProductDetailPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         color: secondBackgroundColor,
@@ -24,14 +24,24 @@ class ProductDetailPreview extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  onPressed: () {
-                    print("add click!");
-                  },
-                  icon: Image.asset("assets/icons/AddPackage.png"),
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: IconButton(
+                    padding: const EdgeInsets.all(0.0),
+                    iconSize: 20,
+                    // alignment: Alignment.topRight,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    onPressed: () {
+                      print("add click!");
+                    },
+                    icon: Image.asset(
+                      "assets/icons/AddPackage.png",
+                      width: 20,
+                    ),
+                  ),
                 ),
               ],
             ),
