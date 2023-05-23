@@ -53,7 +53,10 @@ class MainBarsState extends State<MainBars> {
           onPressed: () {
             switchPage(index);
           },
-          icon: Image.asset(path),
+          icon: Image.asset(
+            path,
+            width: 20,
+          ),
         ),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
