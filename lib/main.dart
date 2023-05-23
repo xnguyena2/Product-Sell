@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Flutter Demo',
+        color: Colors.black,
         theme: ThemeData(
           primarySwatch: Colors.red,
         ),

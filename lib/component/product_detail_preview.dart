@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_sell/page/product_detail.dart';
 
 import '../constants.dart';
 
@@ -17,7 +18,10 @@ class ProductDetailPreview extends StatelessWidget {
       ),
       child: GestureDetector(
         onTap: () {
-          print("preview click!");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProductDetail()),
+          );
         },
         child: Column(
           children: [

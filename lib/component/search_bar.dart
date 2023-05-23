@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart';
+import '../global/app_state.dart';
 
 class SearchButton extends StatelessWidget {
-  final VoidCallback searchPress;
   const SearchButton({
     super.key,
-    required this.searchPress,
   });
 
   @override
@@ -28,7 +28,10 @@ class SearchButton extends StatelessWidget {
         ],
       ),
       child: GestureDetector(
-        onTap: searchPress,
+        onTap: () {
+          var appState = context.read<MyAppState>();
+          appState.switchSearchPage?.call();
+        },
         child: Container(
           height: 40,
           padding: const EdgeInsets.only(left: 20),
