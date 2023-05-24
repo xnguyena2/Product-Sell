@@ -14,7 +14,7 @@ class _ProductDetailState extends State<ProductDetail>
     with SingleTickerProviderStateMixin {
   late AnimationController _ColorAnimationController;
   late Animation _colorShowUp;
-  late Animation _colorShadown, _colorBackBtn;
+  late Animation _colorShadow, _colorBackBtn;
 
   @override
   void initState() {
@@ -29,11 +29,11 @@ class _ProductDetailState extends State<ProductDetail>
               // print(_colorShowUp.value);
             });
           });
-    _colorShadown = ColorTween(
+    _colorShadow = ColorTween(
             begin: Colors.transparent, end: shadowColorDark.withOpacity(0.2))
         .animate(_ColorAnimationController);
     _colorBackBtn = ColorTween(
-            begin: shadowColorDark.withOpacity(0.4), end: shadowColorDark)
+            begin: shadowColorDark.withOpacity(0.2), end: shadowColorDark)
         .animate(_ColorAnimationController);
   }
 
@@ -53,16 +53,73 @@ class _ProductDetailState extends State<ProductDetail>
         children: [
           NotificationListener<ScrollNotification>(
             onNotification: _scrollListener,
-            child: GridView(
-              padding: const EdgeInsets.all(20),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 160 / 215,
-              ),
-              children: [
-                for (var i = 0; i <= 100; i++) const ProductDetailPreview(),
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: AspectRatio(
+                        aspectRatio: 315 / 219,
+                        child: Image.asset("assets/icons/TestProduct2.png"),
+                      ),
+                    ),
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    List.generate(
+                      10,
+                      (index) => Container(
+                        width: 100.0,
+                        child: Card(
+                          child: Text('data'),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 200,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) => Container(
+                        width: 100.0,
+                        child: Card(
+                          child: Text('data'),
+                        ),
+                      ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 10,
+                    ),
+                  ),
+                ),
+                SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return const ProductDetailPreview();
+                    },
+                    childCount: 100,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 160 / 215,
+                  ),
+                ),
+                // GridView(
+                //   padding: const EdgeInsets.all(20),
+                //   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                //     mainAxisSpacing: 10,
+                //     crossAxisSpacing: 10,
+                //     maxCrossAxisExtent: 200,
+                //     childAspectRatio: 160 / 215,
+                //   ),
+                //   children: [
+                //     for (var i = 0; i <= 100; i++) const ProductDetailPreview(),
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -72,7 +129,7 @@ class _ProductDetailState extends State<ProductDetail>
               color: _colorShowUp.value,
               boxShadow: [
                 BoxShadow(
-                  color: _colorShadown.value,
+                  color: _colorShadow.value,
                   offset: const Offset(
                     0.0,
                     4.0,
@@ -86,6 +143,7 @@ class _ProductDetailState extends State<ProductDetail>
               children: [
                 Container(
                   height: 40,
+                  width: 40,
                   // padding: const EdgeInsets.only(left: 20),
                   decoration: BoxDecoration(
                     color: _colorBackBtn.value,
