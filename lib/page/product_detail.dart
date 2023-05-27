@@ -197,7 +197,7 @@ class _ProductDetailState extends State<ProductDetail>
               borderRadius: const BorderRadius.all(Radius.circular(20)),
             ),
             child: IconButton(
-              icon: Image.asset("assets/icons/package.png"),
+              icon: Image.asset("assets/icons/Package.png"),
               onPressed: () {
                 Navigator.pop(context);
               },

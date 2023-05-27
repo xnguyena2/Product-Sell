@@ -54,9 +54,9 @@ class MainBarsState extends State<MainBars> {
           onPressed: () {
             switchPage(index);
           },
-          icon: Image.asset(
+          icon: Image(
             filterQuality: FilterQuality.high,
-            path,
+            image: AssetImage(path),
           ),
         ),
         AnimatedSize(
