@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:product_sell/page/product_detail.dart';
 import 'package:provider/provider.dart';
 
 import 'global/app_state.dart';
 import 'entry_point.dart';
+import 'my_custom_scroll_behavior.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +20,7 @@ class MyApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Flutter Demo',
+        scrollBehavior: MyCustomScrollBehavior(),
         color: Colors.black,
         theme: ThemeData(
           primarySwatch: Colors.red,

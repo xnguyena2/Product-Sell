@@ -50,10 +50,14 @@ class MainBarsState extends State<MainBars> {
       alignment: Alignment.topCenter,
       children: [
         IconButton(
+          iconSize: 30,
           onPressed: () {
             switchPage(index);
           },
-          icon: Image.asset(path),
+          icon: Image.asset(
+            filterQuality: FilterQuality.high,
+            path,
+          ),
         ),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
