@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../component/product_detail_preview.dart';
 import '../constants.dart';
@@ -17,6 +18,8 @@ class _ProductDetailState extends State<ProductDetail>
   late AnimationController _ColorAnimationController;
   late Animation _colorShowUp;
   late Animation _colorShadow, _colorBackBtn;
+  final TextEditingController _NumberController =
+      TextEditingController(text: "1");
   int activeImageIndex = 0;
   int activeCategoryIndex = 0;
   bool detailExpand = false;
@@ -73,60 +76,151 @@ class _ProductDetailState extends State<ProductDetail>
             left: 0,
             right: 0,
             child: Container(
-              color: Colors.red,
+              decoration: const BoxDecoration(
+                color: secondBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 4,
+                    color: normalBorderColor,
+                  ),
+                ],
+                border: Border(
+                  top: BorderSide(
+                    width: 1.0,
+                    color: normalBorderColor,
+                  ),
+                ),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(),
-                  TextButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.resolveWith(
-                        (states) {
-                          // If the button is pressed, return green, otherwise blue
-                          if (states.contains(MaterialState.pressed)) {
-                            return RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10));
-                          }
-                          return RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10));
-                        },
-                      ),
-                      padding: MaterialStateProperty.resolveWith(
-                        (states) {
-                          // If the button is pressed, return green, otherwise blue
-                          if (states.contains(MaterialState.pressed)) {
-                            return const EdgeInsets.symmetric(
-                              horizontal: 40,
-                              vertical: 20,
-                            );
-                          }
-                          return const EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 20,
-                          );
-                        },
-                      ),
-                      backgroundColor: MaterialStateProperty.resolveWith(
-                        (states) {
-                          // If the button is pressed, return green, otherwise blue
-                          if (states.contains(MaterialState.pressed)) {
-                            return dartBackgroundColor;
-                          }
-                          return dartBackgroundColor;
-                        },
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: const Text(
-                      "Mua",
-                      style: TextStyle(
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: secondBackgroundColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                            color: Colors.black,
+                            width: 1.0,
+                            style: BorderStyle.solid),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              String value = _NumberController.text;
+                              if (value.isEmpty) {
+                                return;
+                              }
+                              int currentNum = int.parse(value);
+                              currentNum--;
+                              if (currentNum < 1) {
+                                return;
+                              }
+                              _NumberController.text = currentNum.toString();
+                            },
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 19),
+                            ),
+                            child: const Text(
+                              "-",
+                              style: TextStyle(
+                                color: dartBackgroundColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _NumberController,
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) {
+                                print(value);
+                              },
+                              style: const TextStyle(
+                                decoration: TextDecoration.none,
+                                decorationThickness: 0,
+                              ),
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.all(0),
+                                isDense: true,
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9]"),
+                                ),
+                                TextInputFormatter.withFunction(
+                                  (oldValue, newValue) {
+                                    String value = newValue.text;
+                                    if (value.isEmpty) {
+                                      return newValue.copyWith(
+                                        text: "1",
+                                      );
+                                    }
+                                    int intValue = int.parse(value);
+                                    if (intValue < 1) {
+                                      intValue = 1;
+                                    }
+                                    return newValue.copyWith(
+                                      text: intValue.toString(),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              String value = _NumberController.text;
+                              if (value.isEmpty) {
+                                return;
+                              }
+                              int currentNum = int.parse(value);
+                              currentNum++;
+                              _NumberController.text = currentNum.toString();
+                            },
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 19),
+                            ),
+                            child: const Text(
+                              "+",
+                              style: TextStyle(
+                                color: dartBackgroundColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0.0,
+                        shadowColor: Colors.transparent,
+                        backgroundColor: dartBackgroundColor,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10), // <-- Radius
+                        ),
+                      ),
+                      child: const Image(
+                        width: 30,
+                        filterQuality: FilterQuality.high,
+                        image: AssetImage("assets/icons/AddPackageWhite.png"),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
