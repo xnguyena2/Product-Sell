@@ -20,6 +20,29 @@ class _ProductDetailState extends State<ProductDetail>
   late Animation _colorShadow, _colorBackBtn;
   final TextEditingController _NumberController =
       TextEditingController(text: "1");
+  List<GlobalKey?> categoryKey = [
+    GlobalKey(),
+    null,
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+  ];
   int activeImageIndex = 0;
   int activeCategoryIndex = 0;
   bool detailExpand = false;
@@ -56,176 +79,182 @@ class _ProductDetailState extends State<ProductDetail>
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      body: Stack(
-        // verticalDirection: VerticalDirection.up,
-        children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: _scrollListener,
-            child: CustomScrollView(
-              slivers: [
-                productBigImage(screenWidth),
-                productDetail(),
-                listExtractProduct(),
-              ],
-            ),
-          ),
-          backBtn(context),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: secondBackgroundColor,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 4,
-                    color: normalBorderColor,
-                  ),
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          // verticalDirection: VerticalDirection.up,
+          children: [
+            NotificationListener<ScrollNotification>(
+              onNotification: _scrollListener,
+              child: CustomScrollView(
+                slivers: [
+                  productBigImage(screenWidth),
+                  productDetail(),
+                  listExtractProduct(),
                 ],
-                border: Border(
-                  top: BorderSide(
-                    width: 1.0,
-                    color: normalBorderColor,
+              ),
+            ),
+            backBtn(context),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: secondBackgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 4,
+                      color: normalBorderColor,
+                    ),
+                  ],
+                  border: Border(
+                    top: BorderSide(
+                      width: 1.0,
+                      color: normalBorderColor,
+                    ),
                   ),
                 ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: secondBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: Colors.black,
-                            width: 1.0,
-                            style: BorderStyle.solid),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              String value = _NumberController.text;
-                              if (value.isEmpty) {
-                                return;
-                              }
-                              int currentNum = int.parse(value);
-                              currentNum--;
-                              if (currentNum < 1) {
-                                return;
-                              }
-                              _NumberController.text = currentNum.toString();
-                            },
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 19),
-                            ),
-                            child: const Text(
-                              "-",
-                              style: TextStyle(
-                                color: dartBackgroundColor,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _NumberController,
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                print(value);
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: secondBackgroundColor,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Colors.black,
+                              width: 1.0,
+                              style: BorderStyle.solid),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                String value = _NumberController.text;
+                                if (value.isEmpty) {
+                                  return;
+                                }
+                                int currentNum = int.parse(value);
+                                currentNum--;
+                                if (currentNum < 1) {
+                                  return;
+                                }
+                                _NumberController.text = currentNum.toString();
                               },
-                              style: const TextStyle(
-                                decoration: TextDecoration.none,
-                                decorationThickness: 0,
+                              style: TextButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 19),
                               ),
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.all(0),
-                                isDense: true,
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9]"),
+                              child: const Text(
+                                "-",
+                                style: TextStyle(
+                                  color: dartBackgroundColor,
+                                  fontSize: 16,
                                 ),
-                                TextInputFormatter.withFunction(
-                                  (oldValue, newValue) {
-                                    String value = newValue.text;
-                                    if (value.isEmpty) {
+                              ),
+                            ),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _NumberController,
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  print(value);
+                                },
+                                style: const TextStyle(
+                                  decoration: TextDecoration.none,
+                                  decorationThickness: 0,
+                                ),
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.all(0),
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp("[0-9]"),
+                                  ),
+                                  TextInputFormatter.withFunction(
+                                    (oldValue, newValue) {
+                                      String value = newValue.text;
+                                      if (value.isEmpty) {
+                                        return newValue.copyWith(
+                                          text: "1",
+                                        );
+                                      }
+                                      int intValue = int.parse(value);
+                                      if (intValue < 1) {
+                                        intValue = 1;
+                                      }
                                       return newValue.copyWith(
-                                        text: "1",
+                                        text: intValue.toString(),
                                       );
-                                    }
-                                    int intValue = int.parse(value);
-                                    if (intValue < 1) {
-                                      intValue = 1;
-                                    }
-                                    return newValue.copyWith(
-                                      text: intValue.toString(),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              String value = _NumberController.text;
-                              if (value.isEmpty) {
-                                return;
-                              }
-                              int currentNum = int.parse(value);
-                              currentNum++;
-                              _NumberController.text = currentNum.toString();
-                            },
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 19),
-                            ),
-                            child: const Text(
-                              "+",
-                              style: TextStyle(
-                                color: dartBackgroundColor,
-                                fontSize: 16,
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0.0,
-                        shadowColor: Colors.transparent,
-                        backgroundColor: dartBackgroundColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10), // <-- Radius
+                            TextButton(
+                              onPressed: () {
+                                String value = _NumberController.text;
+                                if (value.isEmpty) {
+                                  return;
+                                }
+                                int currentNum = int.parse(value);
+                                currentNum++;
+                                _NumberController.text = currentNum.toString();
+                              },
+                              style: TextButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 19),
+                              ),
+                              child: const Text(
+                                "+",
+                                style: TextStyle(
+                                  color: dartBackgroundColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      child: const Image(
-                        width: 30,
-                        filterQuality: FilterQuality.high,
-                        image: AssetImage("assets/icons/AddPackageWhite.png"),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0.0,
+                          shadowColor: Colors.transparent,
+                          backgroundColor: dartBackgroundColor,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(10), // <-- Radius
+                          ),
+                        ),
+                        child: const Image(
+                          width: 30,
+                          filterQuality: FilterQuality.high,
+                          image: AssetImage("assets/icons/AddPackageWhite.png"),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -276,7 +305,9 @@ class _ProductDetailState extends State<ProductDetail>
               borderRadius: const BorderRadius.all(Radius.circular(20)),
             ),
             child: IconButton(
-              icon: Image.asset("assets/icons/Back.png"),
+              icon: const Image(
+                image: AssetImage("assets/icons/Back.png"),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -356,7 +387,7 @@ class _ProductDetailState extends State<ProductDetail>
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
                 const Row(
@@ -445,7 +476,13 @@ class _ProductDetailState extends State<ProductDetail>
                   height: 50,
                   child: ListView.separated(
                     itemBuilder: (context, index) => GestureDetector(
+                      key: categoryKey[index],
                       onTap: () {
+                        Scrollable.ensureVisible(
+                            categoryKey[index]!.currentContext!,
+                            alignment: 1,
+                            duration: const Duration(milliseconds: 700),
+                            curve: Curves.ease);
                         setState(() {
                           activeCategoryIndex = index;
                         });
@@ -501,7 +538,7 @@ class _ProductDetailState extends State<ProductDetail>
             left: screenWidth / 2 - screenWidth / 1.5,
             child: CircleAvatar(
               radius: screenWidth / 1.5,
-              backgroundColor: Colors.black,
+              backgroundColor: Colors.white,
             ),
           ),
           Center(

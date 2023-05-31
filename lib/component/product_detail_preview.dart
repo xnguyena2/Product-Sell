@@ -41,8 +41,9 @@ class ProductDetailPreview extends StatelessWidget {
                     onPressed: () {
                       print("add click!");
                     },
-                    icon: Image.asset(
-                      "assets/icons/AddPackage.png",
+                    icon: const Image(
+                      image: AssetImage("assets/icons/AddPackage.png"),
+                      filterQuality: FilterQuality.high,
                       width: 20,
                     ),
                   ),
