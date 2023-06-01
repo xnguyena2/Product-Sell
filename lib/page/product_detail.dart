@@ -20,29 +20,6 @@ class _ProductDetailState extends State<ProductDetail>
   late Animation _colorShadow, _colorBackBtn;
   final TextEditingController _NumberController =
       TextEditingController(text: "1");
-  List<GlobalKey?> categoryKey = [
-    GlobalKey(),
-    null,
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-  ];
   int activeImageIndex = 0;
   int activeCategoryIndex = 0;
   bool detailExpand = false;
@@ -346,38 +323,9 @@ class _ProductDetailState extends State<ProductDetail>
             child: ListView.separated(
               padding: const EdgeInsets.all(10),
               itemBuilder: (context, index) => AspectRatio(
-                  aspectRatio: 1 / 1,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        activeImageIndex = index;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: activeImageIndex == index
-                              ? dartBackgroundColor
-                              : normalBorderColor,
-                        ),
-                        boxShadow: [
-                          activeImageIndex == index
-                              ? BoxShadow(
-                                  color: shadowColorDark.withOpacity(0.3),
-                                  offset: const Offset(
-                                    0.0,
-                                    0.0,
-                                  ),
-                                  blurRadius: 5.0,
-                                  spreadRadius: 1.0,
-                                )
-                              : const BoxShadow(),
-                        ],
-                      ),
-                    ),
-                  )),
+                aspectRatio: 1 / 1,
+                child: createPreivewImage(index),
+              ),
               scrollDirection: Axis.horizontal,
               itemCount: 10,
               separatorBuilder: (BuildContext context, int index) =>
@@ -475,44 +423,7 @@ class _ProductDetailState extends State<ProductDetail>
                   ),
                   height: 50,
                   child: ListView.separated(
-                    itemBuilder: (context, index) => GestureDetector(
-                      key: categoryKey[index],
-                      onTap: () {
-                        Scrollable.ensureVisible(
-                            categoryKey[index]!.currentContext!,
-                            alignment: 1,
-                            duration: const Duration(milliseconds: 700),
-                            curve: Curves.ease);
-                        setState(() {
-                          activeCategoryIndex = index;
-                        });
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: activeCategoryIndex == index
-                              ? highTextColor
-                              : secondBackgroundColor,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: activeCategoryIndex == index
-                                ? dartBackgroundColor
-                                : normalBorderColor,
-                          ),
-                        ),
-                        child: Text(
-                          "loai $index",
-                          style: TextStyle(
-                            color: activeCategoryIndex == index
-                                ? secondBackgroundColor
-                                : highTextColor,
-                            fontSize: 17,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ),
+                    itemBuilder: (context, index) => createCategory(index),
                     scrollDirection: Axis.horizontal,
                     itemCount: 20,
                     separatorBuilder: (BuildContext context, int index) =>
@@ -527,6 +438,88 @@ class _ProductDetailState extends State<ProductDetail>
         ],
       ),
     );
+  }
+
+  GestureDetector createCategory(int index) {
+    var key = GlobalKey();
+    return GestureDetector(
+      key: key,
+      onTap: () {
+        scrollTo(key);
+        setState(() {
+          activeCategoryIndex = index;
+        });
+      },
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+          color: activeCategoryIndex == index
+              ? highTextColor
+              : secondBackgroundColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: activeCategoryIndex == index
+                ? dartBackgroundColor
+                : normalBorderColor,
+          ),
+        ),
+        child: Text(
+          "loai $index",
+          style: TextStyle(
+            color: activeCategoryIndex == index
+                ? secondBackgroundColor
+                : highTextColor,
+            fontSize: 17,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+
+  GestureDetector createPreivewImage(int index) {
+    var key = GlobalKey();
+    return GestureDetector(
+      key: key,
+      onTap: () {
+        scrollTo(key);
+        setState(() {
+          activeImageIndex = index;
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: activeImageIndex == index
+                ? dartBackgroundColor
+                : normalBorderColor,
+          ),
+          boxShadow: [
+            activeImageIndex == index
+                ? BoxShadow(
+                    color: shadowColorDark.withOpacity(0.3),
+                    offset: const Offset(
+                      0.0,
+                      0.0,
+                    ),
+                    blurRadius: 5.0,
+                    spreadRadius: 1.0,
+                  )
+                : const BoxShadow(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void scrollTo(GlobalKey key) {
+    Scrollable.ensureVisible(key.currentContext!,
+        alignment: 1,
+        duration: const Duration(milliseconds: 700),
+        curve: Curves.ease);
   }
 
   SliverToBoxAdapter productBigImage(double screenWidth) {
