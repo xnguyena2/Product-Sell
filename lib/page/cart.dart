@@ -15,12 +15,32 @@ class _CartState extends State<Cart> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: Container(
-          // margin: EdgeInsets.symmetric(horizontal: 18.0, vertical: 0),
-          child: TextButton(
+          decoration: const BoxDecoration(
+            color: secondBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 4,
+                color: normalBorderColor,
+              ),
+            ],
+            border: Border(
+              top: BorderSide(
+                width: 1.0,
+                color: normalBorderColor,
+              ),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: ElevatedButton(
             onPressed: () {},
-            style: TextButton.styleFrom(
+            style: ElevatedButton.styleFrom(
+              elevation: 0.0,
+              shadowColor: Colors.transparent,
               backgroundColor: dartBackgroundColor,
-              padding: const EdgeInsets.symmetric(vertical: 22),
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // <-- Radius
+              ),
             ),
             child: const Text(
               "Check Out",

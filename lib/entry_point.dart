@@ -46,6 +46,10 @@ class _EntryPointState extends State<EntryPoint> {
           child: MainBars(
             switchPage: (pageIndex) {
               if (pageIndex == PageIndex.cart) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Cart()),
+                );
               } else {
                 setState(() {
                   currentPage = pageIndex;
