@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'component/main_bars.dart';
 import 'constants.dart';
+import 'page/cart.dart';
 import 'page/home.dart';
 import 'page/page_index.dart';
+import 'page/search.dart';
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -19,10 +21,13 @@ class _EntryPointState extends State<EntryPoint> {
   Widget build(BuildContext context) {
     Widget page;
     switch (currentPage) {
+      case PageIndex.cart:
       case PageIndex.home:
         page = const HomePage();
         break;
       case PageIndex.search:
+        page = const SearchPage();
+        break;
       default:
         page = const Placeholder();
         break;
@@ -40,9 +45,12 @@ class _EntryPointState extends State<EntryPoint> {
           ),
           child: MainBars(
             switchPage: (pageIndex) {
-              setState(() {
-                currentPage = pageIndex;
-              });
+              if (pageIndex == PageIndex.cart) {
+              } else {
+                setState(() {
+                  currentPage = pageIndex;
+                });
+              }
             },
             pageIndex: currentPage,
           ),

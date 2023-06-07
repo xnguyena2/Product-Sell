@@ -1,7 +1,7 @@
-import 'dart:async';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:product_sell/page/cart.dart';
 
 import '../component/product_detail_preview.dart';
 import '../constants.dart';
@@ -23,6 +23,7 @@ class _ProductDetailState extends State<ProductDetail>
   int activeImageIndex = 0;
   int activeCategoryIndex = 0;
   bool detailExpand = false;
+  int currentIndex = 1;
 
   @override
   void initState() {
@@ -67,169 +68,214 @@ class _ProductDetailState extends State<ProductDetail>
                 slivers: [
                   productBigImage(screenWidth),
                   productDetail(),
+                  watchMore(),
                   listExtractProduct(),
+                  endPadding()
                 ],
               ),
             ),
             backBtn(context),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
+            addCart()
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter endPadding() {
+    return const SliverToBoxAdapter(
+      child: SizedBox(
+        height: 80,
+      ),
+    );
+  }
+
+  SliverToBoxAdapter watchMore() {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              margin: const EdgeInsets.only(right: 10),
+              child: Divider(
+                color: highTextColor.withOpacity(0.4),
+              ),
+            ),
+            const Text(
+              "Xem thêm",
+              style: TextStyle(
+                color: highTextColor,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Container(
+              width: 100,
+              margin: EdgeInsets.only(left: 10),
+              child: Divider(
+                color: highTextColor.withOpacity(0.4),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Positioned addCart() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: secondBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 4,
+              color: normalBorderColor,
+            ),
+          ],
+          border: Border(
+            top: BorderSide(
+              width: 1.0,
+              color: normalBorderColor,
+            ),
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: secondBackgroundColor,
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: normalBorderColor,
-                    ),
-                  ],
-                  border: Border(
-                    top: BorderSide(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: Colors.black,
                       width: 1.0,
-                      color: normalBorderColor,
-                    ),
-                  ),
+                      style: BorderStyle.solid),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: secondBackgroundColor,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                              color: Colors.black,
-                              width: 1.0,
-                              style: BorderStyle.solid),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                String value = _NumberController.text;
-                                if (value.isEmpty) {
-                                  return;
-                                }
-                                int currentNum = int.parse(value);
-                                currentNum--;
-                                if (currentNum < 1) {
-                                  return;
-                                }
-                                _NumberController.text = currentNum.toString();
-                              },
-                              style: TextButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 19),
-                              ),
-                              child: const Text(
-                                "-",
-                                style: TextStyle(
-                                  color: dartBackgroundColor,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _NumberController,
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  print(value);
-                                },
-                                style: const TextStyle(
-                                  decoration: TextDecoration.none,
-                                  decorationThickness: 0,
-                                ),
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.all(0),
-                                  isDense: true,
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp("[0-9]"),
-                                  ),
-                                  TextInputFormatter.withFunction(
-                                    (oldValue, newValue) {
-                                      String value = newValue.text;
-                                      if (value.isEmpty) {
-                                        return newValue.copyWith(
-                                          text: "1",
-                                        );
-                                      }
-                                      int intValue = int.parse(value);
-                                      if (intValue < 1) {
-                                        intValue = 1;
-                                      }
-                                      return newValue.copyWith(
-                                        text: intValue.toString(),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                String value = _NumberController.text;
-                                if (value.isEmpty) {
-                                  return;
-                                }
-                                int currentNum = int.parse(value);
-                                currentNum++;
-                                _NumberController.text = currentNum.toString();
-                              },
-                              style: TextButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 19),
-                              ),
-                              child: const Text(
-                                "+",
-                                style: TextStyle(
-                                  color: dartBackgroundColor,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ],
+                    TextButton(
+                      onPressed: () {
+                        String value = _NumberController.text;
+                        if (value.isEmpty) {
+                          return;
+                        }
+                        int currentNum = int.parse(value);
+                        currentNum--;
+                        if (currentNum < 1) {
+                          return;
+                        }
+                        _NumberController.text = currentNum.toString();
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 19),
+                      ),
+                      child: const Text(
+                        "-",
+                        style: TextStyle(
+                          color: dartBackgroundColor,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
                     Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0.0,
-                          shadowColor: Colors.transparent,
-                          backgroundColor: dartBackgroundColor,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(10), // <-- Radius
-                          ),
+                      child: TextFormField(
+                        controller: _NumberController,
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          print(value);
+                        },
+                        style: const TextStyle(
+                          decoration: TextDecoration.none,
+                          decorationThickness: 0,
                         ),
-                        child: const Image(
-                          width: 30,
-                          filterQuality: FilterQuality.high,
-                          image: AssetImage("assets/icons/AddPackageWhite.png"),
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(0),
+                          isDense: true,
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp("[0-9]"),
+                          ),
+                          TextInputFormatter.withFunction(
+                            (oldValue, newValue) {
+                              String value = newValue.text;
+                              if (value.isEmpty) {
+                                return newValue.copyWith(
+                                  text: "1",
+                                );
+                              }
+                              int intValue = int.parse(value);
+                              if (intValue < 1) {
+                                intValue = 1;
+                              }
+                              return newValue.copyWith(
+                                text: intValue.toString(),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        String value = _NumberController.text;
+                        if (value.isEmpty) {
+                          return;
+                        }
+                        int currentNum = int.parse(value);
+                        currentNum++;
+                        _NumberController.text = currentNum.toString();
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 19),
+                      ),
+                      child: const Text(
+                        "+",
+                        style: TextStyle(
+                          color: dartBackgroundColor,
+                          fontSize: 16,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            )
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  elevation: 0.0,
+                  shadowColor: Colors.transparent,
+                  backgroundColor: dartBackgroundColor,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // <-- Radius
+                  ),
+                ),
+                child: const Image(
+                  width: 30,
+                  filterQuality: FilterQuality.high,
+                  image: AssetImage("assets/icons/AddPackageWhite.png"),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -301,7 +347,10 @@ class _ProductDetailState extends State<ProductDetail>
             child: IconButton(
               icon: Image.asset("assets/icons/Package.png"),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Cart()),
+                );
               },
             ),
           ),
@@ -360,6 +409,44 @@ class _ProductDetailState extends State<ProductDetail>
                   ],
                 ),
                 const SizedBox(
+                  height: 5,
+                ),
+                const Divider(color: normalBorderColor),
+                const SizedBox(
+                  height: 5,
+                ),
+                const Row(
+                  children: [
+                    Text(
+                      "Loại",
+                      style: TextStyle(
+                        color: highTextColor,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 10,
+                  ),
+                  height: 50,
+                  child: ListView.separated(
+                    itemBuilder: (context, index) => createCategory(index),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 20,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const SizedBox(
+                      width: 10,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                const Divider(color: normalBorderColor),
+                const SizedBox(
                   height: 15,
                 ),
                 const Row(
@@ -396,40 +483,6 @@ class _ProductDetailState extends State<ProductDetail>
                       fontWeight: FontWeight.normal,
                     ),
                     "Eros, parturient sit posuere amet. Sed dignissim enim nulla egestas vitae id augue eleifend. Nam commodo scelerisque enim integer risus, non Eros, parturient sit posuere amet. Sed dignissim enim nulla egestas vitae id augue eleifend. Nam commodo scelerisque enim integer risus, nonEros, parturient sit posuere amet. Sed dignissim enim nulla egestas vitae id augue eleifend. Nam commodo scelerisque enim integer risus, non",
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                const Divider(color: normalBorderColor),
-                const SizedBox(
-                  height: 5,
-                ),
-                const Row(
-                  children: [
-                    Text(
-                      "Loại",
-                      style: TextStyle(
-                        color: highTextColor,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 10,
-                  ),
-                  height: 50,
-                  child: ListView.separated(
-                    itemBuilder: (context, index) => createCategory(index),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 20,
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(
-                      width: 10,
-                    ),
                   ),
                 ),
               ],
@@ -534,15 +587,61 @@ class _ProductDetailState extends State<ProductDetail>
               backgroundColor: Colors.white,
             ),
           ),
-          Center(
+          CarouselSlider(
+            options: CarouselOptions(
+              viewportFraction: 1,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  currentIndex = index + 1;
+                });
+              },
+            ),
+            items: [1, 2, 3, 4, 5].map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      // margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      decoration: BoxDecoration(color: Colors.amber),
+                      child: AspectRatio(
+                        aspectRatio: 315 / 219,
+                        child: Image.asset(
+                          "assets/icons/TestProduct2.png",
+                          // fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+          Positioned(
+            bottom: 10,
+            right: 10,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: AspectRatio(
-                aspectRatio: 315 / 219,
-                child: Image.asset("assets/icons/TestProduct2.png"),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              decoration: BoxDecoration(
+                color: backgroundColor.withOpacity(0.7),
+                border:
+                    Border.all(width: 1, color: shadowColor.withOpacity(0.3)),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
               ),
+              child: Text("$currentIndex/5"),
             ),
           ),
+          // Center(
+          //   child: Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 20),
+          //     child: AspectRatio(
+          //       aspectRatio: 315 / 219,
+          //       child: Image.asset("assets/icons/TestProduct2.png"),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

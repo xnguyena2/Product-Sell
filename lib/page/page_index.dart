@@ -2,6 +2,6 @@ enum PageIndex {
   home,
   category,
   search,
-  package,
+  cart,
   profile,
 }

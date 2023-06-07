@@ -35,7 +35,7 @@ class MainBarsState extends State<MainBars> {
       children: [
         newIconBar(PageIndex.home, "assets/icons/Home.png"),
         newIconBar(PageIndex.search, "assets/icons/SearchBar.png"),
-        newIconBar(PageIndex.package, "assets/icons/Package.png"),
+        newIconBar(PageIndex.cart, "assets/icons/Package.png"),
         newIconBar(PageIndex.profile, "assets/icons/Profile.png"),
       ],
     );

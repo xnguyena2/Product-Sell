@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_sell/page/cart.dart';
 import 'package:product_sell/page/product_detail.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.red,
         ),
-        home: const ProductDetail(), //const EntryPoint(),
+        home: const EntryPoint(),
       ),
     );
   }
