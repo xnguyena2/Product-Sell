@@ -31,24 +31,64 @@ class _CartState extends State<Cart> {
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              elevation: 0.0,
-              shadowColor: Colors.transparent,
-              backgroundColor: dartBackgroundColor,
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // <-- Radius
+          child: Row(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Tổng Tiền:",
+                    style: TextStyle(
+                      color: highTextColor.withOpacity(0.8),
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text.rich(
+                    TextSpan(
+                        text: "10.000.000",
+                        style: TextStyle(
+                          color: highTextColor.withOpacity(1),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: const [
+                          TextSpan(
+                            text: "đ",
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          )
+                        ]),
+                  ),
+                ],
               ),
-            ),
-            child: const Text(
-              "Check Out",
-              style: TextStyle(
-                  color: secondBackgroundColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
+              SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0.0,
+                    shadowColor: Colors.transparent,
+                    backgroundColor: dartBackgroundColor,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10), // <-- Radius
+                    ),
+                  ),
+                  child: const Text(
+                    "Check Out",
+                    style: TextStyle(
+                        color: secondBackgroundColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         body: Padding(
@@ -57,41 +97,40 @@ class _CartState extends State<Cart> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: 40,
-                      width: 40,
-                      // padding: const EdgeInsets.only(left: 20),
-                      decoration: BoxDecoration(
-                        color: backgroundColor,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20)),
-                        border: Border.all(
-                            width: 1, color: shadowColor.withOpacity(0.15)),
-                      ),
-                      child: IconButton(
-                        icon: const Image(
-                          image: AssetImage("assets/icons/BackBlack.png"),
-                          opacity: AlwaysStoppedAnimation(.5),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 40,
+                    width: 40,
+                    // padding: const EdgeInsets.only(left: 20),
+                    decoration: BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                      border: Border.all(
+                          width: 1, color: shadowColor.withOpacity(0.15)),
                     ),
-                  ],
-                ),
-              ),
-              const Text(
-                "Shopping Cart",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    child: IconButton(
+                      icon: const Image(
+                        image: AssetImage("assets/icons/BackBlack.png"),
+                        opacity: AlwaysStoppedAnimation(.5),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Text(
+                    "Shopping Cart",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
               Text(
                 "2 items",
@@ -170,8 +209,18 @@ class BuyItem extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "\$1000",
+                      Text.rich(
+                        const TextSpan(
+                          text: "1000",
+                          children: [
+                            TextSpan(
+                              text: "đ",
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
+                        ),
                         style: TextStyle(
                           color: highTextColor.withOpacity(0.8),
                           fontSize: 16,

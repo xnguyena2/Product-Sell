@@ -9,18 +9,21 @@ class ListProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GridView(
-        padding: const EdgeInsets.all(20),
+    return SliverPadding(
+      padding: const EdgeInsets.all(20),
+      sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
           maxCrossAxisExtent: 200,
           childAspectRatio: 160 / 215,
         ),
-        children: [
-          for (var i = 0; i <= 100; i++) const ProductDetailPreview(),
-        ],
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return const ProductDetailPreview();
+          },
+          childCount: 100,
+        ),
       ),
     );
   }

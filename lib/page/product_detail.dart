@@ -7,7 +7,8 @@ import '../component/product_detail_preview.dart';
 import '../constants.dart';
 
 class ProductDetail extends StatefulWidget {
-  const ProductDetail({super.key});
+  final bool preView;
+  const ProductDetail({super.key, this.preView = false});
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
@@ -56,6 +57,7 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   Widget build(BuildContext context) {
+    bool preView = widget.preView;
     double screenWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
@@ -68,13 +70,13 @@ class _ProductDetailState extends State<ProductDetail>
                 slivers: [
                   productBigImage(screenWidth),
                   productDetail(),
-                  watchMore(),
-                  listExtractProduct(),
+                  preView ? SliverToBoxAdapter() : watchMore(),
+                  preView ? SliverToBoxAdapter() : listExtractProduct(),
                   endPadding()
                 ],
               ),
             ),
-            backBtn(context),
+            preView ? SizedBox() : backBtn(context),
             addCart()
           ],
         ),
@@ -633,15 +635,6 @@ class _ProductDetailState extends State<ProductDetail>
               child: Text("$currentIndex/5"),
             ),
           ),
-          // Center(
-          //   child: Container(
-          //     padding: const EdgeInsets.symmetric(horizontal: 20),
-          //     child: AspectRatio(
-          //       aspectRatio: 315 / 219,
-          //       child: Image.asset("assets/icons/TestProduct2.png"),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:product_sell/page/product_detail.dart';
 
 import '../constants.dart';
+import '../page/cart.dart';
 
 class ProductDetailPreview extends StatelessWidget {
   const ProductDetailPreview({
@@ -39,10 +40,40 @@ class ProductDetailPreview extends StatelessWidget {
                     highlightColor: Colors.transparent,
                     hoverColor: Colors.transparent,
                     onPressed: () {
-                      print("add click!");
+                      showModalBottomSheet(
+                        context: context,
+                        // isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) {
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Positioned(
+                                top: 0,
+                                child: SizedBox(
+                                  height: 20,
+                                  width: 100,
+                                  child: Divider(
+                                      thickness: 5, color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 20),
+                                child: const ProductDetail(
+                                  preView: true,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                     icon: const Image(
-                      image: AssetImage("assets/icons/AddPackage.png"),
+                      image: AssetImage("assets/icons/FastSeen.png"),
                       filterQuality: FilterQuality.high,
                       width: 20,
                     ),
@@ -73,8 +104,15 @@ class ProductDetailPreview extends StatelessWidget {
                     ),
                     "Air Force 1 Jester XX Black Sonic Yellow Air Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic Yellow"),
                 SizedBox(height: 10),
-                Text(
-                  "\$99",
+                Text.rich(
+                  TextSpan(text: "99", children: [
+                    TextSpan(
+                      text: "đ",
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    )
+                  ]),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
