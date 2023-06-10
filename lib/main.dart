@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'global/app_state.dart';
 import 'entry_point.dart';
 import 'my_custom_scroll_behavior.dart';
+import 'page/address_select.dart';
 
 void main() {
   runApp(const MyApp());
