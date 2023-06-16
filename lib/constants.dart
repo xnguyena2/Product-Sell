@@ -9,3 +9,4 @@ const Color shadowColorDark = Colors.black;
 const Color secondTextColor = Color(0xFF8B8B8B);
 const Color normalBorderColor = Color(0xFFD8D8DD);
 const Color highTextColor = Colors.black;
+const Color activeColor = Colors.red;

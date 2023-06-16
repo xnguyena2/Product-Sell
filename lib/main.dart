@@ -7,6 +7,8 @@ import 'global/app_state.dart';
 import 'entry_point.dart';
 import 'my_custom_scroll_behavior.dart';
 import 'page/address_select.dart';
+import 'page/location_select.dart';
+import 'page/reciver_info.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.red,
         ),
-        home: const EntryPoint(),
+        home: const LocationSelect(), // const EntryPoint(),
       ),
     );
   }

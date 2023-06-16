@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:product_sell/page/cart.dart';
+import 'package:provider/provider.dart';
 
 import '../component/product_detail_preview.dart';
 import '../constants.dart';
@@ -53,6 +54,12 @@ class _ProductDetailState extends State<ProductDetail>
       _ColorAnimationController.animateTo(scrollInfo.metrics.pixels / 150);
     }
     return true;
+  }
+
+  @override
+  void dispose() {
+    _ColorAnimationController.dispose();
+    super.dispose();
   }
 
   @override
