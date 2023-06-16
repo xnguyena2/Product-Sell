@@ -71,18 +71,35 @@ class _LocationSelectState extends State<LocationSelect> {
             Expanded(
               child: ListView.separated(
                 shrinkWrap: true,
-                itemBuilder: (context, index) => Text(
-                  "tinh $index",
-                  style: TextStyle(),
-                ),
+                itemBuilder: (context, index) => locationItem(index),
                 scrollDirection: Axis.vertical,
                 itemCount: 40,
                 separatorBuilder: (BuildContext context, int index) =>
-                    SizedBox(),
+                    Divider(height: 1),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Container locationItem(int index) {
+    return Container(
+      color: secondBackgroundColor,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 30,
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            child: Text(
+              "tinh $index",
+              style: TextStyle(),
+            ),
+          ),
+        ],
       ),
     );
   }
