@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'component/main_bars.dart';
 import 'constants.dart';
+import 'model/boostrap.dart';
 import 'page/cart.dart';
 import 'page/home.dart';
 import 'page/page_index.dart';
 import 'page/search.dart';
+import 'package:http/http.dart';
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -16,6 +20,28 @@ class EntryPoint extends StatefulWidget {
 
 class _EntryPointState extends State<EntryPoint> {
   PageIndex currentPage = PageIndex.home;
+  late Future<BootStrap> futureBootstrap;
+
+  Future<BootStrap> fetchBootstrap() async {
+    final response = await get(Uri.parse('${host}/clientdevice/bootstrap'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      print(response.body);
+      return BootStrap.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    futureBootstrap = fetchBootstrap();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +49,9 @@ class _EntryPointState extends State<EntryPoint> {
     switch (currentPage) {
       case PageIndex.cart:
       case PageIndex.home:
-        page = const HomePage();
+        page = HomePage(
+          futureBootstrap: futureBootstrap,
+        );
         break;
       case PageIndex.search:
         page = const SearchPage();
@@ -59,6 +87,20 @@ class _EntryPointState extends State<EntryPoint> {
             pageIndex: currentPage,
           ),
         ),
+        // body: Center(
+        //   child: FutureBuilder<BootStrap>(
+        //     future: futureBootstrap,
+        //     builder: (context, snapshot) {
+        //       if (snapshot.hasData) {
+        //         return Text(snapshot.data!.carousel[0]);
+        //       } else if (snapshot.hasError) {
+        //         return Text('${snapshot.error}');
+        //       }
+        //       // By default, show a loading spinner.
+        //       return const CircularProgressIndicator();
+        //     },
+        //   ),
+        // ),
         body: page,
       ),
     );
