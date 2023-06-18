@@ -144,10 +144,10 @@ class ListUnit {
   });
   late final String beer;
   late final String name;
-  late final int price;
-  late final int discount;
+  late final double price;
+  late final double discount;
   late final DateExpir? dateExpir;
-  late final int volumetric;
+  late final double volumetric;
   late final double weight;
   late final String beerUnitSecondId;
   late final String status;
