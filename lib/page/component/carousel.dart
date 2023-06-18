@@ -51,6 +51,7 @@ class _CarouselState extends State<Carousel> {
         CarouselSlider(
           carouselController: carouselController,
           options: CarouselOptions(
+            autoPlayCurve: Curves.fastOutSlowIn,
             autoPlay: widget.mainCarousel,
             viewportFraction: 1,
             onPageChanged: (index, reason) {
