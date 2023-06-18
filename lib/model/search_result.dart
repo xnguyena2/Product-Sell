@@ -13,7 +13,7 @@ class SearchResult {
   late final bool normalSearch;
 
   SearchResult.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
+    count = double.parse(json['count'].toString()).toInt();
     searchTxt = json['searchTxt'];
     result =
         List.from(json['result']).map((e) => Products.fromJson(e)).toList();
