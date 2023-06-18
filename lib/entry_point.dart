@@ -28,8 +28,8 @@ class _EntryPointState extends State<EntryPoint> {
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print(response.body);
-      return BootStrap.fromJson(jsonDecode(response.body));
+      // print(response.body);
+      return BootStrap.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -87,20 +87,6 @@ class _EntryPointState extends State<EntryPoint> {
             pageIndex: currentPage,
           ),
         ),
-        // body: Center(
-        //   child: FutureBuilder<BootStrap>(
-        //     future: futureBootstrap,
-        //     builder: (context, snapshot) {
-        //       if (snapshot.hasData) {
-        //         return Text(snapshot.data!.carousel[0]);
-        //       } else if (snapshot.hasError) {
-        //         return Text('${snapshot.error}');
-        //       }
-        //       // By default, show a loading spinner.
-        //       return const CircularProgressIndicator();
-        //     },
-        //   ),
-        // ),
         body: page,
       ),
     );

@@ -1,15 +1,23 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:convert';
+
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:product_sell/page/cart.dart';
-import 'package:provider/provider.dart';
+import 'package:product_sell/page/component/carousel.dart';
+import 'package:product_sell/page/component/image_loading.dart';
 
 import '../component/product_detail_preview.dart';
 import '../constants.dart';
+import '../model/boostrap.dart';
+import '../model/search_query.dart';
+import '../model/search_result.dart';
 
 class ProductDetail extends StatefulWidget {
   final bool preView;
-  const ProductDetail({super.key, this.preView = false});
+  final Products product;
+  const ProductDetail({super.key, required this.product, this.preView = false});
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
@@ -26,10 +34,34 @@ class _ProductDetailState extends State<ProductDetail>
   int activeCategoryIndex = 0;
   bool detailExpand = false;
   int currentIndex = 1;
+  CarouselController buttonCarouselController = CarouselController();
+
+  late Future<SearchResult> futureSearchResult;
+
+  Future<SearchResult> fetchSearchResult() async {
+    final filter = SearchQuery("", 0, 8, "default");
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
+    final response = await post(
+      Uri.parse('${host}/beer/search'),
+      body: jsonEncode(filter),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      // print(response.body);
+      return SearchResult.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    } else {
+      throw Exception('Failed to load album');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    futureSearchResult = fetchSearchResult();
     _ColorAnimationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 0));
     _colorShowUp =
@@ -65,6 +97,7 @@ class _ProductDetailState extends State<ProductDetail>
   @override
   Widget build(BuildContext context) {
     bool preView = widget.preView;
+    Products product = widget.product;
     double screenWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
@@ -75,10 +108,28 @@ class _ProductDetailState extends State<ProductDetail>
               onNotification: _scrollListener,
               child: CustomScrollView(
                 slivers: [
-                  productBigImage(screenWidth),
-                  productDetail(),
+                  productBigImage(screenWidth, product.images),
+                  productDetail(product),
                   preView ? SliverToBoxAdapter() : watchMore(),
-                  preView ? SliverToBoxAdapter() : listExtractProduct(),
+                  preView
+                      ? SliverToBoxAdapter()
+                      : FutureBuilder<SearchResult>(
+                          future: futureSearchResult,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return listExtractProduct(snapshot.data!);
+                            } else if (snapshot.hasError) {
+                              return SliverToBoxAdapter(
+                                  child: Text('${snapshot.error}'));
+                            }
+                            // By default, show a loading spinner.
+                            return const SliverToBoxAdapter(
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          },
+                        ),
                   endPadding()
                 ],
               ),
@@ -291,13 +342,13 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  SliverGrid listExtractProduct() {
+  SliverGrid listExtractProduct(SearchResult result) {
     return SliverGrid(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return const ProductDetailPreview();
+          return ProductDetailPreview(product: result.result[index]);
         },
-        childCount: 100,
+        childCount: result.count,
       ),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         mainAxisSpacing: 10,
@@ -368,7 +419,9 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  SliverToBoxAdapter productDetail() {
+  SliverToBoxAdapter productDetail(Products product) {
+    List<String> listPreviewImage =
+        product.images?.map((e) => e.thumbnail).toList() ?? [];
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -382,10 +435,10 @@ class _ProductDetailState extends State<ProductDetail>
               padding: const EdgeInsets.all(10),
               itemBuilder: (context, index) => AspectRatio(
                 aspectRatio: 1 / 1,
-                child: createPreivewImage(index),
+                child: createPreivewImage(listPreviewImage[index], index),
               ),
               scrollDirection: Axis.horizontal,
-              itemCount: 10,
+              itemCount: listPreviewImage.length,
               separatorBuilder: (BuildContext context, int index) =>
                   const SizedBox(
                 width: 10,
@@ -396,20 +449,28 @@ class _ProductDetailState extends State<ProductDetail>
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Nike",
-                      style: TextStyle(
+                      "${product.name}",
+                      style: const TextStyle(
                         color: highTextColor,
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    Text(
-                      "\$15",
-                      style: TextStyle(
+                    Text.rich(
+                      TextSpan(
+                        text: "${product.listUnit[activeCategoryIndex].price}",
+                        children: const [
+                          TextSpan(
+                            text: "đ",
+                            style: TextStyle(fontSize: 17),
+                          )
+                        ],
+                      ),
+                      style: const TextStyle(
                         color: highTextColor,
                         fontSize: 20,
                         fontWeight: FontWeight.normal,
@@ -442,9 +503,10 @@ class _ProductDetailState extends State<ProductDetail>
                   ),
                   height: 50,
                   child: ListView.separated(
-                    itemBuilder: (context, index) => createCategory(index),
+                    itemBuilder: (context, index) =>
+                        createCategory(product.listUnit[index], index),
                     scrollDirection: Axis.horizontal,
-                    itemCount: 20,
+                    itemCount: product.listUnit.length,
                     separatorBuilder: (BuildContext context, int index) =>
                         const SizedBox(
                       width: 10,
@@ -491,7 +553,7 @@ class _ProductDetailState extends State<ProductDetail>
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
                     ),
-                    "Eros, parturient sit posuere amet. Sed dignissim enim nulla egestas vitae id augue eleifend. Nam commodo scelerisque enim integer risus, non Eros, parturient sit posuere amet. Sed dignissim enim nulla egestas vitae id augue eleifend. Nam commodo scelerisque enim integer risus, nonEros, parturient sit posuere amet. Sed dignissim enim nulla egestas vitae id augue eleifend. Nam commodo scelerisque enim integer risus, non",
+                    "${product.detail}",
                   ),
                 ),
               ],
@@ -502,7 +564,7 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  GestureDetector createCategory(int index) {
+  GestureDetector createCategory(ListUnit unit, int index) {
     var key = GlobalKey();
     return GestureDetector(
       key: key,
@@ -527,7 +589,7 @@ class _ProductDetailState extends State<ProductDetail>
           ),
         ),
         child: Text(
-          "loai $index",
+          "${unit.name}",
           style: TextStyle(
             color: activeCategoryIndex == index
                 ? secondBackgroundColor
@@ -540,7 +602,7 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  GestureDetector createPreivewImage(int index) {
+  GestureDetector createPreivewImage(String url, int index) {
     var key = GlobalKey();
     return GestureDetector(
       key: key,
@@ -548,6 +610,7 @@ class _ProductDetailState extends State<ProductDetail>
         scrollTo(key);
         setState(() {
           activeImageIndex = index;
+          buttonCarouselController.animateToPage(activeImageIndex);
         });
       },
       child: Container(
@@ -573,6 +636,7 @@ class _ProductDetailState extends State<ProductDetail>
                 : const BoxShadow(),
           ],
         ),
+        child: ImageLoading(url: url),
       ),
     );
   }
@@ -584,7 +648,23 @@ class _ProductDetailState extends State<ProductDetail>
         curve: Curves.ease);
   }
 
-  SliverToBoxAdapter productBigImage(double screenWidth) {
+  SliverToBoxAdapter productBigImage(
+      double screenWidth, List<Images>? carousel) {
+    carousel ??= [
+      Images(
+          id: "id",
+          imgid: "imgid",
+          thumbnail: "thumbnail",
+          medium: "medium",
+          large: "large",
+          category: "category",
+          createat: "createat")
+    ];
+    List<String> images = carousel
+        .map(
+          (e) => e.large,
+        )
+        .toList();
     return SliverToBoxAdapter(
       child: Stack(
         children: [
@@ -596,52 +676,16 @@ class _ProductDetailState extends State<ProductDetail>
               backgroundColor: Colors.white,
             ),
           ),
-          CarouselSlider(
-            options: CarouselOptions(
-              viewportFraction: 1,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  currentIndex = index + 1;
-                });
-              },
-            ),
-            items: [1, 2, 3, 4, 5].map((i) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Center(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      // margin: EdgeInsets.symmetric(horizontal: 5.0),
-                      decoration: BoxDecoration(color: Colors.amber),
-                      child: AspectRatio(
-                        aspectRatio: 315 / 219,
-                        child: Image.asset(
-                          "assets/icons/TestProduct2.png",
-                          // fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          ),
-          Positioned(
-            bottom: 10,
-            right: 10,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              decoration: BoxDecoration(
-                color: backgroundColor.withOpacity(0.7),
-                border:
-                    Border.all(width: 1, color: shadowColor.withOpacity(0.3)),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(10),
-                ),
-              ),
-              child: Text("$currentIndex/5"),
-            ),
-          ),
+          Carousel(
+            data: images,
+            mainCarousel: false,
+            carouselController: buttonCarouselController,
+            pageChange: (index) {
+              setState(() {
+                activeImageIndex = index;
+              });
+            },
+          )
         ],
       ),
     );

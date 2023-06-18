@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:product_sell/page/component/image_loading.dart';
 import 'package:product_sell/page/product_detail.dart';
 
 import '../constants.dart';
-import '../page/cart.dart';
+import '../model/boostrap.dart';
 
 class ProductDetailPreview extends StatelessWidget {
+  final Products product;
+
   const ProductDetailPreview({
     super.key,
+    required this.product,
   });
 
   @override
   Widget build(BuildContext context) {
+    String productImageUrl = product.images?[0].large ?? "error";
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -21,7 +26,11 @@ class ProductDetailPreview extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ProductDetail()),
+            MaterialPageRoute(
+              builder: (context) => ProductDetail(
+                product: product,
+              ),
+            ),
           );
         },
         child: Column(
@@ -43,7 +52,7 @@ class ProductDetailPreview extends StatelessWidget {
                       showModalBottomSheet(
                         context: context,
                         // isScrollControlled: true,
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
                             top: Radius.circular(20),
                           ),
@@ -52,7 +61,7 @@ class ProductDetailPreview extends StatelessWidget {
                           return Stack(
                             alignment: Alignment.center,
                             children: [
-                              Positioned(
+                              const Positioned(
                                 top: 0,
                                 child: SizedBox(
                                   height: 20,
@@ -62,8 +71,9 @@ class ProductDetailPreview extends StatelessWidget {
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(top: 20),
-                                child: const ProductDetail(
+                                margin: const EdgeInsets.only(top: 20),
+                                child: ProductDetail(
+                                  product: product,
                                   preView: true,
                                 ),
                               ),
@@ -82,13 +92,13 @@ class ProductDetailPreview extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: Image.asset("assets/icons/TestProduct1.png"),
+              child: ImageLoading(url: productImageUrl),
             ),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Nike",
+                  "${product.name}",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -102,7 +112,7 @@ class ProductDetailPreview extends StatelessWidget {
                       fontSize: 13,
                       color: secondTextColor,
                     ),
-                    "Air Force 1 Jester XX Black Sonic Yellow Air Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic YellowAir Force 1 Jester XX Black Sonic Yellow"),
+                    "${product.detail}"),
                 SizedBox(height: 10),
                 Text.rich(
                   TextSpan(text: "99", children: [

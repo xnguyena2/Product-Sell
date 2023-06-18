@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../model/boostrap.dart';
 import 'product_detail_preview.dart';
 
 class ListProduct extends StatelessWidget {
+  final List<Products> products;
   const ListProduct({
     super.key,
+    required this.products,
   });
 
   @override
@@ -20,9 +23,9 @@ class ListProduct extends StatelessWidget {
         ),
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            return const ProductDetailPreview();
+            return ProductDetailPreview(product: this.products[index]);
           },
-          childCount: 100,
+          childCount: this.products.length,
         ),
       ),
     );

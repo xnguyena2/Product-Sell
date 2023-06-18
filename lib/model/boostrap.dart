@@ -66,10 +66,12 @@ class Products {
   Products.fromJson(Map<String, dynamic> json) {
     beerSecondID = json['beerSecondID'];
     name = json['name'];
-    detail = null;
+    detail = json['detail'];
     category = json['category'];
     status = json['status'];
-    images = null;
+    images = json['images'] == null
+        ? null
+        : List.from(json['images']).map((e) => Images.fromJson(e)).toList();
     listUnit =
         List.from(json['listUnit']).map((e) => ListUnit.fromJson(e)).toList();
   }
