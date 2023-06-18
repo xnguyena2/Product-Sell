@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:product_sell/page/cart.dart';
 import 'package:product_sell/page/product_detail.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +11,14 @@ import 'global/app_state.dart';
 import 'entry_point.dart';
 import 'my_custom_scroll_behavior.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  ByteData data =
+      await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext
+      .setTrustedCertificatesBytes(data.buffer.asUint8List());
+
   runApp(const MyApp());
 }
 
