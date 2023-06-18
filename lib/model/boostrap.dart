@@ -190,9 +190,9 @@ class DateExpir {
   late final int year;
 
   DateExpir.fromJson(Map<String, dynamic> json) {
-    day = json['day'];
-    month = json['month'];
-    year = json['year'];
+    day = double.parse(json['day'].toString()).toInt();
+    month = double.parse(json['month'].toString()).toInt();
+    year = double.parse(json['year'].toString()).toInt();
   }
 
   Map<String, dynamic> toJson() {
