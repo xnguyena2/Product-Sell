@@ -1,4 +1,5 @@
 import 'package:product_sell/model/boostrap.dart';
+import 'package:product_sell/model/category_item.dart';
 
 BootStrap bootStrapDebugValue() {
   Map<String, dynamic> dbVal = {
@@ -321,3 +322,11 @@ BootStrap bootStrapDebugValue() {
 
   return BootStrap.fromJson(dbVal);
 }
+
+final List<CategoryIteam> listCategory = List.generate(
+        6,
+        (index) => CategoryIteam(
+            category: "category$index",
+            title: "Đồ uống loại $index",
+            imageUrl: "https://cdn-icons-png.flaticon.com/512/988/988934.png"))
+    .toList();
