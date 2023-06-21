@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const String host = "https://web-production-bb73.up.railway.app";
+const double carouselAspectRatio = 315 / 219;
 
 const Color backgroundColor = Color(0xFFF4F4F4);
 const Color secondBackgroundColor = Colors.white;

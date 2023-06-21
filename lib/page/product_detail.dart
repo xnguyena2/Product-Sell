@@ -39,7 +39,7 @@ class _ProductDetailState extends State<ProductDetail>
   late Future<SearchResult> futureSearchResult;
 
   Future<SearchResult> fetchSearchResult() async {
-    final filter = SearchQuery("", 0, 8, "default");
+    final filter = SearchQuery("", 0, 24, "default");
     Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
     };
@@ -650,16 +650,7 @@ class _ProductDetailState extends State<ProductDetail>
 
   SliverToBoxAdapter productBigImage(
       double screenWidth, List<Images>? carousel) {
-    carousel ??= [
-      Images(
-          id: "id",
-          imgid: "imgid",
-          thumbnail: "thumbnail",
-          medium: "medium",
-          large: "large",
-          category: "category",
-          createat: "createat")
-    ];
+    carousel ??= [Images.error()];
     List<String> images = carousel
         .map(
           (e) => e.large,

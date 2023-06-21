@@ -14,9 +14,10 @@ class SearchResult {
 
   SearchResult.fromJson(Map<String, dynamic> json) {
     count = double.parse(json['count'].toString()).toInt();
-    searchTxt = json['searchTxt'];
-    result =
-        List.from(json['result']).map((e) => Products.fromJson(e)).toList();
+    searchTxt = json['searchTxt'] ?? "";
+    result = json['result'] == null
+        ? []
+        : List.from(json['result']).map((e) => Products.fromJson(e)).toList();
     normalSearch = json['normalSearch'];
   }
 

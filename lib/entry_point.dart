@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'component/main_bars.dart';
 import 'constants.dart';
 import 'model/boostrap.dart';
+import 'model/debug_value.dart';
 import 'page/cart.dart';
 import 'page/home.dart';
 import 'page/page_index.dart';
@@ -26,13 +28,9 @@ class _EntryPointState extends State<EntryPoint> {
     final response = await get(Uri.parse('${host}/clientdevice/bootstrap'));
 
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       // print(response.body);
       return BootStrap.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw Exception('Failed to load album');
     }
   }
@@ -40,7 +38,13 @@ class _EntryPointState extends State<EntryPoint> {
   @override
   void initState() {
     super.initState();
-    futureBootstrap = fetchBootstrap();
+    if (kReleaseMode) {
+      print("release");
+      futureBootstrap = fetchBootstrap();
+    } else {
+      futureBootstrap = Future.value(bootStrapDebugValue());
+      print("debug");
+    }
   }
 
   @override

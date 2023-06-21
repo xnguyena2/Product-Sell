@@ -107,6 +107,16 @@ class Images {
   late final String category;
   late final String createat;
 
+  Images.error() {
+    id = "id";
+    imgid = "imgid";
+    thumbnail = "thumbnail";
+    medium = "medium";
+    large = "large";
+    category = "category";
+    createat = "createat";
+  }
+
   Images.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     imgid = json['imgid'];

@@ -68,11 +68,14 @@ class _CarouselState extends State<Carousel> {
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     // margin: EdgeInsets.symmetric(horizontal: 5.0),
-                    decoration: const BoxDecoration(color: Colors.white),
+                    decoration: const BoxDecoration(color: Colors.red),
                     child: AspectRatio(
-                      aspectRatio: 315 / 219,
-                      child: ImageLoading(
-                        url: url,
+                      aspectRatio: carouselAspectRatio,
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: ImageLoading(
+                          url: url,
+                        ),
                       ),
                     ),
                   ),
