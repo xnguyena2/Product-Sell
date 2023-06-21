@@ -31,7 +31,7 @@ class _EntryPointState extends State<EntryPoint> {
       // print(response.body);
       return BootStrap.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
-      throw Exception('Failed to load album');
+      throw Exception('Failed to load data');
     }
   }
 

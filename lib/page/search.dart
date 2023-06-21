@@ -10,7 +10,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final TextEditingController _NumberController = TextEditingController();
+  final TextEditingController _SearchTxtController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -48,12 +48,7 @@ class _SearchPageState extends State<SearchPage> {
                 Expanded(
                   child: TextFormField(
                     autofocus: true,
-                    controller: _NumberController,
-                    // textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      print(value);
-                    },
+                    controller: _SearchTxtController,
                     style: const TextStyle(
                       decoration: TextDecoration.none,
                       decorationThickness: 0,

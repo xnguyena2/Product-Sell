@@ -1,13 +1,13 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:product_sell/page/cart.dart';
 import 'package:product_sell/page/component/carousel.dart';
 import 'package:product_sell/page/component/image_loading.dart';
 
+import '../api/post.dart';
+import '../component/list_product.dart';
 import '../component/product_detail_preview.dart';
 import '../constants.dart';
 import '../model/boostrap.dart';
@@ -36,32 +36,17 @@ class _ProductDetailState extends State<ProductDetail>
   int currentIndex = 1;
   CarouselController buttonCarouselController = CarouselController();
 
+  bool loading = false;
+  bool noMore = false;
+  final filter = SearchQuery("", 0, 24, "default");
   late Future<SearchResult> futureSearchResult;
-
-  Future<SearchResult> fetchSearchResult() async {
-    final filter = SearchQuery("", 0, 24, "default");
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-    };
-
-    final response = await post(
-      Uri.parse('${host}/beer/search'),
-      body: jsonEncode(filter),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      // print(response.body);
-      return SearchResult.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
-    } else {
-      throw Exception('Failed to load album');
-    }
-  }
+  List<Products> listProduct = [];
+  final oCcy = NumberFormat("#,##0", "en_US");
 
   @override
   void initState() {
     super.initState();
-    futureSearchResult = fetchSearchResult();
+    futureSearchResult = fetchSearchResult(filter);
     _ColorAnimationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 0));
     _colorShowUp =
@@ -85,7 +70,35 @@ class _ProductDetailState extends State<ProductDetail>
         scrollInfo.metrics.pixels <= 300) {
       _ColorAnimationController.animateTo(scrollInfo.metrics.pixels / 150);
     }
+    if (noMore == false &&
+        loading == false &&
+        scrollInfo.metrics.axis == Axis.vertical &&
+        scrollInfo.metrics.pixels / scrollInfo.metrics.maxScrollExtent > 0.8) {
+      loadMore();
+    }
     return true;
+  }
+
+  void loadMore() {
+    loading = true;
+    setState(() {});
+    filter.page++;
+    fetchSearchResult(filter).then((value) {
+      List<Products> moreProduct = value.result;
+      moreProduct.removeWhere(
+          (element) => element.beerSecondID == widget.product.beerSecondID);
+      noMore = moreProduct.isEmpty;
+      listProduct.addAll(moreProduct);
+      loading = false;
+      setState(() {});
+    });
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
@@ -110,14 +123,17 @@ class _ProductDetailState extends State<ProductDetail>
                 slivers: [
                   productBigImage(screenWidth, product.images),
                   productDetail(product),
-                  preView ? SliverToBoxAdapter() : watchMore(),
+                  preView ? const SliverToBoxAdapter() : watchMore(),
                   preView
-                      ? SliverToBoxAdapter()
+                      ? const SliverToBoxAdapter()
                       : FutureBuilder<SearchResult>(
                           future: futureSearchResult,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return listExtractProduct(snapshot.data!);
+                              listProduct = snapshot.data!.result;
+                              return ListProduct(
+                                products: listProduct,
+                              );
                             } else if (snapshot.hasError) {
                               return SliverToBoxAdapter(
                                   child: Text('${snapshot.error}'));
@@ -129,6 +145,19 @@ class _ProductDetailState extends State<ProductDetail>
                               ),
                             );
                           },
+                        ),
+                  preView
+                      ? const SliverToBoxAdapter()
+                      : SliverToBoxAdapter(
+                          child: loading
+                              ? const Center(
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : const SizedBox(),
                         ),
                   endPadding()
                 ],
@@ -342,23 +371,6 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  SliverGrid listExtractProduct(SearchResult result) {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          return ProductDetailPreview(product: result.result[index]);
-        },
-        childCount: result.count,
-      ),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        maxCrossAxisExtent: 200,
-        childAspectRatio: 160 / 215,
-      ),
-    );
-  }
-
   Container backBtn(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -462,7 +474,12 @@ class _ProductDetailState extends State<ProductDetail>
                     ),
                     Text.rich(
                       TextSpan(
-                        text: "${product.listUnit[activeCategoryIndex].price}",
+                        text: oCcy.format(
+                          product.listUnit[activeCategoryIndex].price *
+                              (1 -
+                                  product
+                                      .listUnit[activeCategoryIndex].discount),
+                        ),
                         children: const [
                           TextSpan(
                             text: "đ",

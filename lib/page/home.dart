@@ -1,15 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:product_sell/page/component/image_loading.dart';
 
+import '../api/post.dart';
 import '../component/list_product.dart';
 import '../component/search_bar.dart';
 import '../constants.dart';
 import '../model/boostrap.dart';
 import '../model/debug_value.dart';
-import '../model/search_query.dart';
 import '../model/search_result.dart';
 import 'component/carousel.dart';
 
@@ -41,26 +38,6 @@ class _HomePageState extends State<HomePage> {
       loadMore();
     }
     return true;
-  }
-
-  Future<SearchResult> fetchMoreResult(int page) async {
-    final filter = SearchQuery("all", page, 24, "default");
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-    };
-
-    final response = await post(
-      Uri.parse('${host}/beer/getall'),
-      body: jsonEncode(filter),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      // print(response.body);
-      return SearchResult.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
-    } else {
-      throw Exception('Failed to load album');
-    }
   }
 
   void loadMore() {
