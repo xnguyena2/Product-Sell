@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import '../constants.dart';
 import '../model/search_query.dart';
 import '../model/search_result.dart';
+import '../utils/vntone.dart';
 
 Future<SearchResult> fetchMoreResult(int page) async {
   final filter = SearchQuery("all", page, 24, "default");
@@ -27,6 +28,7 @@ Future<SearchResult> fetchMoreResult(int page) async {
 }
 
 Future<SearchResult> fetchSearchResult(SearchQuery filter) async {
+  filter.query = removeVNTones(filter.query);
   Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8',
   };

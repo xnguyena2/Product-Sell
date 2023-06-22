@@ -13,11 +13,11 @@ class ListProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(5),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
           maxCrossAxisExtent: 200,
           childAspectRatio: 160 / 215,
         ),
