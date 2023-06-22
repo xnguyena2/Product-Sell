@@ -36,7 +36,7 @@ class _SearchPageState extends State<SearchPage> {
     "Giá Giảm": 'price_desc',
   };
   final int priceAscIndex = 3;
-  int priceIndex = 3;
+  int filterQueryIndex = 0;
 
   int currentFilterIndex = 0;
 
@@ -70,11 +70,15 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  void resetFilter() {
+    filterQueryIndex = currentFilterIndex = 0;
+  }
+
   void search(String txt) {
+    noMore = false;
     searchPressed = true;
-    priceIndex = priceAscIndex;
     String filterTitle =
-        filterQuery[filterTitles[currentFilterIndex]] ?? 'default';
+        filterQuery[filterTitles[filterQueryIndex]] ?? 'default';
     filter.query = txt;
     filter.page = 0;
     filter.size = 24;
@@ -119,15 +123,10 @@ class _SearchPageState extends State<SearchPage> {
                                 filterSeperator(),
                                 filterItem(2),
                                 filterSeperator(),
-                                filterItem(priceIndex),
+                                filterItem(3),
                               ],
                             ),
                           ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 500,
                         ),
                       ),
                       FutureBuilder<SearchResult>(
@@ -142,6 +141,14 @@ class _SearchPageState extends State<SearchPage> {
                             );
                           } else if (snapshot.hasData) {
                             listProduct = snapshot.data!.result;
+                            if (snapshot.data!.count == 0) {
+                              noMore = true;
+                              return const SliverToBoxAdapter(
+                                child: Center(
+                                  child: Text("Không tìm thấy kết quả!"),
+                                ),
+                              );
+                            }
                             return ListProduct(
                               products: listProduct,
                             );
@@ -186,17 +193,19 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Expanded filterItem(int index) {
-    String txt = filterTitles[index];
+    String txt =
+        index == priceAscIndex && (filterQueryIndex == priceAscIndex + 1)
+            ? filterTitles[filterQueryIndex]
+            : filterTitles[index];
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          if (index < priceAscIndex) {
-            currentFilterIndex = index;
-          } else {
-            if (currentFilterIndex == priceAscIndex) {
-              priceIndex = currentFilterIndex = priceAscIndex + 1;
-            } else if (currentFilterIndex == priceAscIndex + 1) {
-              priceIndex = currentFilterIndex = priceAscIndex;
+          currentFilterIndex = index;
+          if (currentFilterIndex == priceAscIndex) {
+            if (filterQueryIndex == priceAscIndex) {
+              filterQueryIndex = priceAscIndex + 1;
+            } else {
+              filterQueryIndex = priceAscIndex;
             }
           }
           String txt = _SearchTxtController.text;
@@ -238,10 +247,14 @@ class _SearchPageState extends State<SearchPage> {
           } else {
             return item;
           }
-        }).map((index) {
+        }).map((txt) {
           return FittedBox(
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                _SearchTxtController.text = txt;
+                resetFilter();
+                search(txt);
+              },
               child: Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(10),
@@ -253,7 +266,7 @@ class _SearchPageState extends State<SearchPage> {
                   // ),
                 ),
                 child: Text(
-                  "$index",
+                  "$txt",
                   style: const TextStyle(
                     color: dartBackgroundColor,
                     fontSize: 16,
@@ -297,6 +310,7 @@ class _SearchPageState extends State<SearchPage> {
             GestureDetector(
               onTap: () {
                 String txt = _SearchTxtController.text;
+                resetFilter();
                 search(txt);
               },
               child: Image.asset("assets/icons/Search.png"),
