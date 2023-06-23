@@ -85,13 +85,17 @@ class _ProductDetailState extends State<ProductDetail>
     filter.page++;
     fetchSearchResult(filter).then((value) {
       List<Products> moreProduct = value.result;
-      moreProduct.removeWhere(
-          (element) => element.beerSecondID == widget.product.beerSecondID);
+      removeDumplicate(moreProduct);
       noMore = moreProduct.isEmpty;
       listProduct.addAll(moreProduct);
       loading = false;
       setState(() {});
     });
+  }
+
+  void removeDumplicate(List<Products> listProducts) {
+    listProducts.removeWhere(
+        (element) => element.beerSecondID == widget.product.beerSecondID);
   }
 
   @override
@@ -131,6 +135,7 @@ class _ProductDetailState extends State<ProductDetail>
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               listProduct = snapshot.data!.result;
+                              removeDumplicate(listProduct);
                               return ListProduct(
                                 products: listProduct,
                               );
