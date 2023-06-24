@@ -437,6 +437,7 @@ class _ProductDetailState extends State<ProductDetail>
   }
 
   SliverToBoxAdapter productDetail(Products product) {
+    ListUnit currentUnit = product.listUnit[activeCategoryIndex];
     List<String> listPreviewImage =
         product.images?.map((e) => e.thumbnail).toList() ?? [];
     return SliverToBoxAdapter(
@@ -477,26 +478,55 @@ class _ProductDetailState extends State<ProductDetail>
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    Text.rich(
-                      TextSpan(
-                        text: oCcy.format(
-                          product.listUnit[activeCategoryIndex].price *
-                              (1 -
-                                  product
-                                      .listUnit[activeCategoryIndex].discount),
-                        ),
-                        children: const [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text.rich(
                           TextSpan(
-                            text: "đ",
-                            style: TextStyle(fontSize: 17),
-                          )
-                        ],
-                      ),
-                      style: const TextStyle(
-                        color: highTextColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal,
-                      ),
+                            text: oCcy.format(
+                              currentUnit.price *
+                                  (1 - currentUnit.discount / 100),
+                            ),
+                            children: const [
+                              TextSpan(
+                                text: "đ",
+                                style: TextStyle(fontSize: 17),
+                              )
+                            ],
+                          ),
+                          style: const TextStyle(
+                            color: highTextColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        currentUnit.discount > 0
+                            ? const SizedBox(
+                                width: 10,
+                              )
+                            : const SizedBox(),
+                        currentUnit.discount > 0
+                            ? Text.rich(
+                                TextSpan(
+                                  text: oCcy.format(currentUnit.price),
+                                  children: const [
+                                    TextSpan(
+                                      text: "đ",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                style: const TextStyle(
+                                  decoration: TextDecoration.lineThrough,
+                                  color: secondTextColor,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : const SizedBox(),
+                      ],
                     ),
                   ],
                 ),

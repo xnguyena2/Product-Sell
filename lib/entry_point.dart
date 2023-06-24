@@ -21,7 +21,7 @@ class EntryPoint extends StatefulWidget {
 }
 
 class _EntryPointState extends State<EntryPoint> {
-  PageIndex currentPage = PageIndex.search;
+  PageIndex currentPage = PageIndex.home;
   late Future<BootStrap> futureBootstrap;
 
   Future<BootStrap> fetchBootstrap() async {

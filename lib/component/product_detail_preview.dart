@@ -127,8 +127,8 @@ class ProductDetailPreview extends StatelessWidget {
                         children: [
                           Text.rich(
                             TextSpan(
-                              text:
-                                  "${oCcy.format(minUnit.price * (1 - minUnit.discount))}",
+                              text: oCcy.format(
+                                  minUnit.price * (1 - minUnit.discount / 100)),
                               children: const [
                                 TextSpan(
                                   text: "đ",
@@ -162,7 +162,7 @@ class ProductDetailPreview extends StatelessWidget {
     return minUnit.discount > 0
         ? Text.rich(
             TextSpan(
-              text: "${formater.format(minUnit.price * minUnit.discount)}",
+              text: formater.format(minUnit.price),
               children: const [
                 TextSpan(
                   text: "đ",
