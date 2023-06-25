@@ -11,7 +11,6 @@ import 'component/main_bars.dart';
 import 'constants.dart';
 import 'global/app_state.dart';
 import 'model/boostrap.dart';
-import 'model/debug_value.dart';
 import 'model/package_result.dart';
 import 'page/cart.dart';
 import 'page/home.dart';
@@ -53,10 +52,7 @@ class _EntryPointState extends State<EntryPoint> {
       futureBootstrap = fetchBootstrap();
       print("debug");
     }
-    futurePackage = Future.delayed(
-      Duration(seconds: 5),
-      () => fetchPackageResult(UserInfoQuery(0, 0, deviceID)),
-    );
+    futurePackage = fetchPackageResult(UserInfoQuery(0, 0, deviceID));
   }
 
   @override

@@ -6,10 +6,12 @@ import 'package:product_sell/page/component/image_loading.dart';
 import 'package:product_sell/page/page_index.dart';
 import 'package:provider/provider.dart';
 
+import '../api/get.dart';
 import '../constants.dart';
 import '../global/app_state.dart';
 import '../model/package_result.dart';
 import '../model/product_package.dart';
+import 'product_detail.dart';
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -222,142 +224,207 @@ class BuyItem extends StatefulWidget {
 
 class _BuyItemState extends State<BuyItem> {
   bool processing = false;
+  Future<Products>? productFuture;
   @override
   Widget build(BuildContext context) {
     ListUnit unit = widget.item.beerSubmitData.listUnit[0];
     double realPrice = unit.price * (1 - unit.discount / 100);
-    return SizedBox(
-      height: 120,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Row(
-          children: [
-            AspectRatio(
-              aspectRatio: 100 / 100,
-              child: ImageLoading(
-                url: widget.item.beerSubmitData.images?[0].medium ?? "error",
+    return GestureDetector(
+      onTap: () {
+        productFuture = fetchProduct(widget.item.beerId);
+        productFuture!.then(
+          (value) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetail(
+                  product: value,
+                ),
               ),
-            ),
-            const SizedBox(
-              width: 30,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            );
+          },
+        );
+        setState(() {});
+      },
+      child: SizedBox(
+        height: 120,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Row(
                 children: [
-                  Text(
-                    widget.item.beerSubmitData.name,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+                  AspectRatio(
+                    aspectRatio: 100 / 100,
+                    child: ImageLoading(
+                      url: widget.item.beerSubmitData.images?[0].medium ??
+                          "error",
                     ),
+                  ),
+                  const SizedBox(
+                    width: 30,
                   ),
                   Expanded(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        "Loại: ${unit.name} | ${widget.oCcy.format(realPrice)}đ",
-                        style: const TextStyle(
-                          color: secondTextColor,
-                          fontSize: 14,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.item.beerSubmitData.name,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          text: widget.oCcy
-                              .format(widget.item.numberUnit * realPrice),
-                          children: const [
-                            TextSpan(
-                              text: "đ",
-                              style: TextStyle(
-                                fontSize: 12,
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              "Loại: ${unit.name} | ${widget.oCcy.format(realPrice)}đ",
+                              style: const TextStyle(
+                                color: secondTextColor,
+                                fontSize: 14,
                               ),
-                            )
-                          ],
+                            ),
+                          ),
                         ),
-                        style: TextStyle(
-                          color: highTextColor.withOpacity(0.8),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: normalBorderColor.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            TextButton(
-                              onPressed: processing
-                                  ? null
-                                  : () {
-                                      bool isGreatThan1 =
-                                          widget.item.numberUnit > 1;
-                                      isGreatThan1
-                                          ? changePackage(unit, -1)
-                                          : {};
-                                    },
-                              style: TextButton.styleFrom(
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                padding: const EdgeInsets.all(10),
+                            Text.rich(
+                              TextSpan(
+                                text: widget.oCcy
+                                    .format(widget.item.numberUnit * realPrice),
+                                children: const [
+                                  TextSpan(
+                                    text: "đ",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  )
+                                ],
                               ),
-                              child: const Text(
-                                "-",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: highTextColor,
-                                ),
+                              style: TextStyle(
+                                color: highTextColor.withOpacity(0.8),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            ConstrainedBox(
-                              constraints:
-                                  const BoxConstraints.tightFor(width: 30),
-                              child: Text(
-                                '${widget.item.numberUnit}',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: highTextColor,
-                                ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: normalBorderColor.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
-                            TextButton(
-                              onPressed: processing
-                                  ? null
-                                  : () => changePackage(unit, 1),
-                              style: TextButton.styleFrom(
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                padding: const EdgeInsets.all(10),
-                              ),
-                              child: const Text(
-                                "+",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: highTextColor,
-                                ),
+                              child: Row(
+                                children: [
+                                  TextButton(
+                                    onPressed: processing
+                                        ? null
+                                        : () {
+                                            bool isGreatThan1 =
+                                                widget.item.numberUnit > 1;
+                                            isGreatThan1
+                                                ? changePackage(unit, -1)
+                                                : showDeleteDialog(
+                                                    context,
+                                                    () {},
+                                                  );
+                                          },
+                                    style: TextButton.styleFrom(
+                                      minimumSize: Size.zero,
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      padding: const EdgeInsets.all(10),
+                                    ),
+                                    child: const Text(
+                                      "-",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: highTextColor,
+                                      ),
+                                    ),
+                                  ),
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints.tightFor(
+                                        width: 30),
+                                    child: Text(
+                                      '${widget.item.numberUnit}',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: highTextColor,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: processing
+                                        ? null
+                                        : () => changePackage(unit, 1),
+                                    style: TextButton.styleFrom(
+                                      minimumSize: Size.zero,
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      padding: const EdgeInsets.all(10),
+                                    ),
+                                    child: const Text(
+                                      "+",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: highTextColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    ],
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
-            )
+            ),
+            productFuture == null
+                ? SizedBox()
+                : FutureBuilder<Products>(
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return SizedBox();
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                    future: productFuture,
+                  )
           ],
         ),
+      ),
+    );
+  }
+
+  Future<String?> showDeleteDialog(BuildContext context, VoidCallback ok) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Chú Ý!'),
+        content: const Text('Bạn có chắc muốn xóa sản phầm này không?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'OK');
+              ok();
+            },
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }

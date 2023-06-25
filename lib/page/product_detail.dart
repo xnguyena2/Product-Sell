@@ -8,7 +8,6 @@ import 'package:product_sell/page/component/image_loading.dart';
 
 import '../api/post.dart';
 import '../component/list_product.dart';
-import '../component/product_detail_preview.dart';
 import '../constants.dart';
 import '../model/boostrap.dart';
 import '../model/search_query.dart';
