@@ -8,4 +8,12 @@ class UserInfoQuery {
     this.size = s;
     this.id = id;
   }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['page'] = page;
+    _data['size'] = size;
+    return _data;
+  }
 }

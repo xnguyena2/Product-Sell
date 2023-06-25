@@ -2,11 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:product_sell/api/post.dart';
+import 'package:product_sell/model/user_info_query.dart';
+import 'package:provider/provider.dart';
 
 import 'component/main_bars.dart';
 import 'constants.dart';
+import 'global/app_state.dart';
 import 'model/boostrap.dart';
 import 'model/debug_value.dart';
+import 'model/package_result.dart';
 import 'page/cart.dart';
 import 'page/home.dart';
 import 'page/page_index.dart';
@@ -23,6 +28,7 @@ class EntryPoint extends StatefulWidget {
 class _EntryPointState extends State<EntryPoint> {
   PageIndex currentPage = PageIndex.home;
   late Future<BootStrap> futureBootstrap;
+  late Future<PackageResult> futurePackage;
 
   Future<BootStrap> fetchBootstrap() async {
     final response = await get(Uri.parse('${host}/clientdevice/bootstrap'));
@@ -45,10 +51,15 @@ class _EntryPointState extends State<EntryPoint> {
       futureBootstrap = Future.value(bootStrapDebugValue());
       print("debug");
     }
+    futurePackage = fetchPackageResult(UserInfoQuery(0, 0, deviceID));
   }
 
   @override
   Widget build(BuildContext context) {
+    futurePackage.then((value) {
+      var appState = context.read<MyAppState>();
+      appState.updateNotification(PageIndex.cart, value.calcTotal());
+    });
     Widget page;
     switch (currentPage) {
       case PageIndex.cart:

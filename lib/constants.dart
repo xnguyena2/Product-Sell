@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 const String host = "https://product-sell.onrender.com";
+
+const String deviceID = "1687247699000";
+
 const double carouselAspectRatio = 315 / 219;
 
 const Color backgroundColor = Color(0xFFF4F4F4);

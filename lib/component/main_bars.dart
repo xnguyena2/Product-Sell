@@ -30,13 +30,18 @@ class MainBarsState extends State<MainBars> {
     appState.switchSearchPage = () {
       switchPage(PageIndex.search);
     };
+    appState.refreshMainBar = () {
+      setState(() {});
+    };
+
+    var notifiMap = appState.notificationNo;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        newIconBar(PageIndex.home, "assets/icons/Home.png"),
-        newIconBar(PageIndex.search, "assets/icons/SearchBar.png"),
-        newIconBar(PageIndex.cart, "assets/icons/Package.png"),
-        newIconBar(PageIndex.profile, "assets/icons/Profile.png"),
+        newIconBar(PageIndex.home, "assets/icons/Home.png", notifiMap),
+        newIconBar(PageIndex.search, "assets/icons/SearchBar.png", notifiMap),
+        newIconBar(PageIndex.cart, "assets/icons/Package.png", notifiMap),
+        newIconBar(PageIndex.profile, "assets/icons/Profile.png", notifiMap),
       ],
     );
   }
@@ -45,7 +50,9 @@ class MainBarsState extends State<MainBars> {
     widget.switchPage(index);
   }
 
-  Stack newIconBar(PageIndex index, String path) {
+  Stack newIconBar(
+      PageIndex index, String path, Map<PageIndex, int> notifiMap) {
+    int noNotifi = notifiMap[index]!;
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -72,6 +79,27 @@ class MainBarsState extends State<MainBars> {
             ),
           ),
         ),
+        noNotifi > 0
+            ? Positioned(
+                right: 0,
+                top: 0,
+                child: CircleAvatar(
+                  radius: 10,
+                  backgroundColor: secondBackgroundColor,
+                  child: CircleAvatar(
+                    radius: 9,
+                    backgroundColor: activeColor,
+                    child: Text(
+                      "$noNotifi",
+                      style: TextStyle(
+                        color: secondBackgroundColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : SizedBox(),
       ],
     );
   }
