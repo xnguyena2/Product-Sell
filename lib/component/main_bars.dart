@@ -91,7 +91,7 @@ class MainBarsState extends State<MainBars> {
                     backgroundColor: activeColor,
                     child: Text(
                       "$noNotifi",
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: secondBackgroundColor,
                         fontSize: 12,
                       ),
@@ -99,7 +99,7 @@ class MainBarsState extends State<MainBars> {
                   ),
                 ),
               )
-            : SizedBox(),
+            : const SizedBox(),
       ],
     );
   }

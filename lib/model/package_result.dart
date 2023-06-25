@@ -17,6 +17,16 @@ class PackageResult {
         0, (previousValue, element) => previousValue + element.numberUnit);
   }
 
+  double totalPrice() {
+    return listResult.fold(
+        0.0,
+        (previousValue, element) =>
+            previousValue +
+            element.numberUnit *
+                element.beerSubmitData.listUnit[0].price *
+                (1 - element.beerSubmitData.listUnit[0].discount / 100));
+  }
+
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['list_result'] = listResult.map((e) => e.toJson()).toList();
@@ -39,7 +49,7 @@ class ListResult {
   late final String deviceId;
   late final String beerId;
   late final String beerUnit;
-  late final int numberUnit;
+  int numberUnit = 0;
   late final Null status;
   late final String createat;
   late final BeerSubmitData beerSubmitData;
@@ -93,7 +103,9 @@ class BeerSubmitData {
     detail = json['detail'];
     category = json['category'];
     status = json['status'];
-    images = null;
+    images = json['images'] == null
+        ? null
+        : List.from(json['images']).map((e) => Images.fromJson(e)).toList();
     listUnit =
         List.from(json['listUnit']).map((e) => ListUnit.fromJson(e)).toList();
   }

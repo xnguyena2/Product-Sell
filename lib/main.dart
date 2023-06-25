@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Shop Demo',
+        debugShowCheckedModeBanner: false,
         scrollBehavior: MyCustomScrollBehavior(),
         color: Colors.black,
         theme: ThemeData(

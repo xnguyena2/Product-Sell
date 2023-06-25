@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -48,18 +49,21 @@ class _EntryPointState extends State<EntryPoint> {
       print("release");
       futureBootstrap = fetchBootstrap();
     } else {
-      futureBootstrap = Future.value(bootStrapDebugValue());
+      // futureBootstrap = Future.value(bootStrapDebugValue());
+      futureBootstrap = fetchBootstrap();
       print("debug");
     }
-    futurePackage = fetchPackageResult(UserInfoQuery(0, 0, deviceID));
+    futurePackage = Future.delayed(
+      Duration(seconds: 5),
+      () => fetchPackageResult(UserInfoQuery(0, 0, deviceID)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    futurePackage.then((value) {
-      var appState = context.read<MyAppState>();
-      appState.updateNotification(PageIndex.cart, value.calcTotal());
-    });
+    var appState = context.read<MyAppState>();
+    appState.setPackageResult(futurePackage);
+
     Widget page;
     switch (currentPage) {
       case PageIndex.cart:
