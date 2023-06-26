@@ -206,7 +206,7 @@ class ProductDetailPreview extends StatelessWidget {
                       child: Text(
                         "${minUnit.discount}%",
                         style: const TextStyle(
-                            color: secondBackgroundColor, fontSize: 13),
+                            color: secondBackgroundColor, fontSize: 11),
                       ),
                     ),
                   ),

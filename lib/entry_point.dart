@@ -93,7 +93,7 @@ class _EntryPointState extends State<EntryPoint> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const Cart(
-                            buyItem: null,
+                            buyPackage: null,
                           )),
                 );
               } else {

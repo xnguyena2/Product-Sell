@@ -16,8 +16,8 @@ import 'component/address_item.dart';
 import 'product_detail.dart';
 
 class Cart extends StatefulWidget {
-  final List<ListResult>? buyItem;
-  const Cart({super.key, required this.buyItem});
+  final PackageResult? buyPackage;
+  const Cart({super.key, required this.buyPackage});
 
   @override
   State<Cart> createState() => _CartState();
@@ -25,13 +25,13 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   final oCcy = NumberFormat("#,##0", "en_US");
-  final List<ListResult> buyItem = [];
+  final PackageResult buyPackage = PackageResult(listResult: []);
   late bool isCheckOut;
 
   @override
   void initState() {
     super.initState();
-    isCheckOut = widget.buyItem != null;
+    isCheckOut = widget.buyPackage != null;
   }
 
   @override
@@ -40,8 +40,7 @@ class _CartState extends State<Cart> {
     return SafeArea(
       child: FutureBuilder<PackageResult>(
         future: isCheckOut
-            ? Future<PackageResult>.value(
-                PackageResult(listResult: widget.buyItem!))
+            ? Future<PackageResult>.value(buyPackage)
             : appState.futurePackage,
         builder: (context, snapshot) {
           PackageResult? package;
@@ -83,9 +82,7 @@ class _CartState extends State<Cart> {
                         ),
                         Text.rich(
                           TextSpan(
-                              text: package != null
-                                  ? oCcy.format(package.totalPrice())
-                                  : "0",
+                              text: oCcy.format(buyPackage.totalPrice()),
                               style: TextStyle(
                                 color: highTextColor.withOpacity(1),
                                 fontSize: 18,
@@ -114,7 +111,7 @@ class _CartState extends State<Cart> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => Cart(
-                                          buyItem: buyItem,
+                                          buyPackage: buyPackage,
                                         )),
                               );
                             }
@@ -234,9 +231,11 @@ class _CartState extends State<Cart> {
                               value: isCheckOut ? null : false,
                               onChanged: (bool value) {
                                 if (value) {
-                                  buyItem.add(package!.listResult[index]);
+                                  buyPackage.listResult
+                                      .add(package!.listResult[index]);
                                 } else {
-                                  buyItem.remove(package!.listResult[index]);
+                                  buyPackage.listResult
+                                      .remove(package!.listResult[index]);
                                 }
                                 setState(() {});
                               },
@@ -329,17 +328,20 @@ class _BuyItemState extends State<BuyItem> {
                           width: 5,
                         )
                       : SizedBox(),
-                  AspectRatio(
-                    aspectRatio: 100 / 100,
-                    child: ImageLoading(
-                      url: widget.item.beerSubmitData.images?[0].medium ??
-                          "error",
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 100 / 100,
+                      child: ImageLoading(
+                        url: widget.item.beerSubmitData.images?[0].medium ??
+                            "error",
+                      ),
                     ),
                   ),
                   const SizedBox(
                     width: 30,
                   ),
                   Expanded(
+                    flex: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

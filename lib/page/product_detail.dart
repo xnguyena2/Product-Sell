@@ -510,7 +510,7 @@ class _ProductDetailState extends State<ProductDetail>
                         context,
                         MaterialPageRoute(
                             builder: (context) => const Cart(
-                                  buyItem: null,
+                                  buyPackage: null,
                                 )),
                       );
                       setState(() {});
