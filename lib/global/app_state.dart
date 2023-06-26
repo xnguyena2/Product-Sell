@@ -24,10 +24,11 @@ class MyAppState extends ChangeNotifier {
     refreshMainBar?.call();
   }
 
-  void setPackageResult(Future<PackageResult> futurePackage) {
+  Future<PackageResult> setPackageResult(Future<PackageResult> futurePackage) {
     this.futurePackage = futurePackage;
-    futurePackage.then((value) {
+    return futurePackage.then((value) {
       updateNotification(PageIndex.cart, value.calcTotal());
+      return value;
     });
   }
 }

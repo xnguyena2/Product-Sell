@@ -194,7 +194,7 @@ class _ProductDetailState extends State<ProductDetail>
                 ],
               ),
             ),
-            preView ? SizedBox() : backBtn(context, noNotifi),
+            preView ? const SizedBox() : backBtn(context, noNotifi),
             addCart(appState),
           ],
         ),
@@ -449,9 +449,10 @@ class _ProductDetailState extends State<ProductDetail>
 
   void fetchPackageResultAgain(MyAppState appState) {
     var futurePackage = fetchPackageResult(UserInfoQuery(0, 0, deviceID));
-    appState.setPackageResult(futurePackage);
-    futurePackage.then((value) => Future.delayed(Duration(milliseconds: 200))
-        .then((value) => setState(() {})));
+    appState
+        .setPackageResult(futurePackage)
+        .then((value) => Future.delayed(const Duration(milliseconds: 200)))
+        .then((value) => setState(() {}));
   }
 
   Container backBtn(BuildContext context, int noNotifi) {

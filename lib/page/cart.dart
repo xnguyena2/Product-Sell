@@ -227,8 +227,6 @@ class _CartState extends State<Cart> {
                               oCcy: oCcy,
                               refresh: () {
                                 setState(() {});
-                                appState.updateNotification(
-                                    PageIndex.cart, package!.calcTotal());
                               },
                               delete: () => package!.listResult.removeAt(index),
                               value: isCheckOut ? null : false,
@@ -240,6 +238,11 @@ class _CartState extends State<Cart> {
                                   buyPackage.listResult
                                       .remove(package!.listResult[index]);
                                 }
+                                setState(() {});
+                              },
+                              updateItemCount: () {
+                                appState.updateNotification(
+                                    PageIndex.cart, package!.calcTotal());
                                 setState(() {});
                               },
                             ),
@@ -264,6 +267,7 @@ class BuyItem extends StatefulWidget {
   final NumberFormat oCcy;
   final ListResult item;
   final VoidCallback refresh;
+  final VoidCallback updateItemCount;
   final VoidCallback delete;
   final bool? value;
   final ValueChanged<bool> onChanged;
@@ -275,6 +279,7 @@ class BuyItem extends StatefulWidget {
     required this.delete,
     required this.value,
     required this.onChanged,
+    required this.updateItemCount,
   });
 
   @override
@@ -295,8 +300,8 @@ class _BuyItemState extends State<BuyItem> {
           ? () {
               productFuture = fetchProduct(widget.item.beerId);
               productFuture!.then(
-                (value) {
-                  Navigator.push(
+                (value) async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProductDetail(
@@ -304,6 +309,7 @@ class _BuyItemState extends State<BuyItem> {
                       ),
                     ),
                   );
+                  widget.refresh();
                 },
               );
               setState(() {});
@@ -536,7 +542,7 @@ class _BuyItemState extends State<BuyItem> {
     ).then((value) {
       processing = false;
       widget.delete();
-      widget.refresh.call();
+      widget.updateItemCount.call();
     }).catchError(
       (error, stackTrace) {
         setState(() {
@@ -561,7 +567,7 @@ class _BuyItemState extends State<BuyItem> {
     ).then((value) {
       processing = false;
       widget.item.numberUnit += diff;
-      widget.refresh.call();
+      widget.updateItemCount.call();
     }).catchError(
       (error, stackTrace) {
         setState(() {
