@@ -62,11 +62,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return FutureBuilder<BootStrap>(
       future: widget.futureBootstrap,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return mainContent(snapshot.data!);
+          return mainContent(snapshot.data!, screenWidth);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
@@ -78,7 +79,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Column mainContent(BootStrap data) {
+  Column mainContent(BootStrap data, double screenWidth) {
     listProduct = data.products;
     return Column(
       verticalDirection: VerticalDirection.up,
@@ -138,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                             gridDelegate:
                                 const SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 110,
-                              childAspectRatio: 10 / 7,
+                              childAspectRatio: 10 / 5,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 50,
                             ),
@@ -148,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                                 children: [
                                   Container(
                                     alignment: Alignment.center,
-                                    padding: EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: secondBackgroundColor,
                                       borderRadius: BorderRadius.circular(15),
@@ -161,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                                           url: listCategory[index].imageUrl),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
                                   Text(

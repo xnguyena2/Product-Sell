@@ -32,6 +32,9 @@ class _CartState extends State<Cart> {
   void initState() {
     super.initState();
     isCheckOut = widget.buyPackage != null;
+    if (isCheckOut) {
+      buyPackage.listResult.addAll(widget.buyPackage!.listResult);
+    }
   }
 
   @override
