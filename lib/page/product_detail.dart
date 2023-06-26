@@ -5,13 +5,18 @@ import 'package:intl/intl.dart';
 import 'package:product_sell/page/cart.dart';
 import 'package:product_sell/page/component/carousel.dart';
 import 'package:product_sell/page/component/image_loading.dart';
+import 'package:provider/provider.dart';
 
 import '../api/post.dart';
 import '../component/list_product.dart';
 import '../constants.dart';
+import '../global/app_state.dart';
 import '../model/boostrap.dart';
+import '../model/product_package.dart';
 import '../model/search_query.dart';
 import '../model/search_result.dart';
+import '../model/user_info_query.dart';
+import 'page_index.dart';
 
 class ProductDetail extends StatefulWidget {
   final bool preView;
@@ -23,7 +28,7 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _ColorAnimationController;
   late Animation _colorShowUp;
   late Animation _colorShadow, _colorBackBtn;
@@ -41,6 +46,12 @@ class _ProductDetailState extends State<ProductDetail>
   late Future<SearchResult> futureSearchResult;
   List<Products> listProduct = [];
   final oCcy = NumberFormat("#,##0", "en_US");
+
+  bool processing = false;
+
+  // add cart animation
+  late final AnimationController _addCartController;
+  late final Animation<double> _addCartAnimation;
 
   @override
   void initState() {
@@ -62,6 +73,19 @@ class _ProductDetailState extends State<ProductDetail>
     _colorBackBtn = ColorTween(
             begin: shadowColorDark.withOpacity(0.2), end: shadowColorDark)
         .animate(_ColorAnimationController);
+
+    _addCartController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _addCartAnimation = Tween(begin: 1.0, end: 1.5).animate(
+      CurvedAnimation(
+        parent: _addCartController,
+        curve: Curves.fastLinearToSlowEaseIn,
+      ),
+    )..addListener(() {
+        setState(() => {});
+      });
   }
 
   bool _scrollListener(ScrollNotification scrollInfo) {
@@ -106,6 +130,7 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   void dispose() {
+    _addCartController.dispose();
     _ColorAnimationController.dispose();
     super.dispose();
   }
@@ -115,6 +140,8 @@ class _ProductDetailState extends State<ProductDetail>
     bool preView = widget.preView;
     Products product = widget.product;
     double screenWidth = MediaQuery.of(context).size.width;
+    var appState = context.read<MyAppState>();
+    int noNotifi = appState.notificationNo[PageIndex.cart]!;
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -167,8 +194,8 @@ class _ProductDetailState extends State<ProductDetail>
                 ],
               ),
             ),
-            preView ? SizedBox() : backBtn(context),
-            addCart()
+            preView ? SizedBox() : backBtn(context, noNotifi),
+            addCart(appState),
           ],
         ),
       ),
@@ -218,7 +245,7 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  Positioned addCart() {
+  Positioned addCart(MyAppState appState) {
     return Positioned(
       bottom: 0,
       left: 0,
@@ -352,11 +379,25 @@ class _ProductDetailState extends State<ProductDetail>
             ),
             Expanded(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: processing
+                    ? null
+                    : () {
+                        ListUnit currentUnit =
+                            widget.product.listUnit[activeCategoryIndex];
+                        changePackage(
+                          currentUnit,
+                          int.parse(_NumberController.text),
+                          () {
+                            fetchPackageResultAgain(appState);
+                            updatePackageAnimation();
+                          },
+                        );
+                      },
                 style: ElevatedButton.styleFrom(
                   elevation: 0.0,
                   shadowColor: Colors.transparent,
-                  backgroundColor: dartBackgroundColor,
+                  backgroundColor:
+                      processing ? normalBorderColor05 : dartBackgroundColor,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // <-- Radius
@@ -375,7 +416,45 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  Container backBtn(BuildContext context) {
+  void changePackage(ListUnit unit, int numberUnit, VoidCallback refresh) {
+    setState(() {
+      processing = true;
+    });
+    addToPackage(
+      ProductPackage(
+          beerID: widget.product.beerSecondID,
+          beerUnits: [
+            BeerUnits(beerUnitID: unit.beerUnitSecondId, numberUnit: numberUnit)
+          ],
+          deviceID: deviceID),
+    ).then((value) {
+      setState(() {
+        processing = false;
+      });
+      refresh();
+    }).catchError(
+      (error, stackTrace) {
+        setState(() {
+          processing = false;
+        });
+        print("Error: $error");
+      },
+    );
+  }
+
+  void updatePackageAnimation() async {
+    await _addCartController.forward();
+    await _addCartController.reverse();
+  }
+
+  void fetchPackageResultAgain(MyAppState appState) {
+    var futurePackage = fetchPackageResult(UserInfoQuery(0, 0, deviceID));
+    appState.setPackageResult(futurePackage);
+    futurePackage.then((value) => Future.delayed(Duration(milliseconds: 200))
+        .then((value) => setState(() {})));
+  }
+
+  Container backBtn(BuildContext context, int noNotifi) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       decoration: BoxDecoration(
@@ -412,22 +491,51 @@ class _ProductDetailState extends State<ProductDetail>
               },
             ),
           ),
-          Container(
-            height: 40,
-            width: 40,
-            // padding: const EdgeInsets.only(left: 20),
-            decoration: BoxDecoration(
-              color: _colorBackBtn.value,
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            child: IconButton(
-              icon: Image.asset("assets/icons/Package.png"),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Cart()),
-                );
-              },
+          Transform.scale(
+            scale: _addCartAnimation.value,
+            child: Container(
+              height: 40,
+              width: 40,
+              // padding: const EdgeInsets.only(left: 20),
+              decoration: BoxDecoration(
+                color: _colorBackBtn.value,
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Stack(
+                children: [
+                  IconButton(
+                    icon: Image.asset("assets/icons/Package.png"),
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Cart()),
+                      );
+                      setState(() {});
+                    },
+                  ),
+                  noNotifi > 0
+                      ? Positioned(
+                          right: 0,
+                          top: 0,
+                          child: CircleAvatar(
+                            radius: 10,
+                            backgroundColor: secondBackgroundColor,
+                            child: CircleAvatar(
+                              radius: 9,
+                              backgroundColor: activeColor,
+                              child: Text(
+                                "$noNotifi",
+                                style: const TextStyle(
+                                  color: secondBackgroundColor,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
+                ],
+              ),
             ),
           ),
         ],

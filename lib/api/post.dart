@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 import '../constants.dart';
+import '../model/package_item_remove.dart';
 import '../model/package_result.dart';
 import '../model/product_package.dart';
 import '../model/response.dart';
@@ -88,6 +89,28 @@ Future<ResponseResult> addToPackage(ProductPackage productPackage) async {
   if (response.statusCode == 200) {
     // print(response.body);
     return ResponseResult.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
+
+Future<dynamic> deleteItemFromPackage(ProductPackage productPackage) async {
+  PackageItemRemove itemRemove = PackageItemRemove(
+      deviceId: productPackage.deviceID,
+      unitId: productPackage.beerUnits[0].beerUnitID);
+  Map<String, String> headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+
+  final response = await post(
+    Uri.parse('${host}/package/remove'),
+    body: jsonEncode(itemRemove),
+    headers: headers,
+  );
+
+  if (response.statusCode == 200) {
+    // print(response.body);
+    return jsonDecode(utf8.decode(response.bodyBytes));
   } else {
     throw Exception('Failed to load data');
   }

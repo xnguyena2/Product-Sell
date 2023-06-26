@@ -189,6 +189,7 @@ class _CartState extends State<Cart> {
                                 appState.updateNotification(
                                     PageIndex.cart, package!.calcTotal());
                               },
+                              delete: () => package!.listResult.removeAt(index),
                             ),
                             scrollDirection: Axis.vertical,
                             itemCount: package.listResult.length,
@@ -211,11 +212,13 @@ class BuyItem extends StatefulWidget {
   final NumberFormat oCcy;
   final ListResult item;
   final VoidCallback refresh;
+  final VoidCallback delete;
   const BuyItem({
     super.key,
     required this.item,
     required this.oCcy,
     required this.refresh,
+    required this.delete,
   });
 
   @override
@@ -326,7 +329,7 @@ class _BuyItemState extends State<BuyItem> {
                                                 ? changePackage(unit, -1)
                                                 : showDeleteDialog(
                                                     context,
-                                                    () {},
+                                                    () => removeItem(unit),
                                                   );
                                           },
                                     style: TextButton.styleFrom(
@@ -429,6 +432,31 @@ class _BuyItemState extends State<BuyItem> {
     );
   }
 
+  void removeItem(ListUnit unit) {
+    setState(() {
+      processing = true;
+    });
+    deleteItemFromPackage(
+      ProductPackage(
+          beerID: widget.item.beerId,
+          beerUnits: [
+            BeerUnits(beerUnitID: unit.beerUnitSecondId, numberUnit: 0)
+          ],
+          deviceID: deviceID),
+    ).then((value) {
+      processing = false;
+      widget.delete();
+      widget.refresh.call();
+    }).catchError(
+      (error, stackTrace) {
+        setState(() {
+          processing = false;
+        });
+        print("Error: $error");
+      },
+    );
+  }
+
   void changePackage(ListUnit unit, int diff) {
     setState(() {
       processing = true;
@@ -449,7 +477,7 @@ class _BuyItemState extends State<BuyItem> {
         setState(() {
           processing = false;
         });
-        print("inner: $error");
+        print("Error: $error");
       },
     );
   }
