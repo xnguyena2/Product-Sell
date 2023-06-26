@@ -176,7 +176,7 @@ class _CartState extends State<Cart> {
                       Text(
                         isCheckOut ? "Check Out" : "Shopping Cart",
                         style: const TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold),
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
