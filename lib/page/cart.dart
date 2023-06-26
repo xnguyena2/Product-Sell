@@ -318,22 +318,27 @@ class _BuyItemState extends State<BuyItem> {
               child: Row(
                 children: [
                   isEnableSelectBox
-                      ? Checkbox(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          value: _isSelected,
-                          onChanged: (bool? newValue) {
-                            _isSelected = newValue ?? false;
-                            widget.onChanged(newValue!);
-                          },
+                      ? SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Checkbox(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            value: _isSelected,
+                            onChanged: (bool? newValue) {
+                              _isSelected = newValue ?? false;
+                              widget.onChanged(newValue!);
+                            },
+                          ),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                   isEnableSelectBox
                       ? const SizedBox(
                           width: 5,
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                   Expanded(
+                    flex: 2,
                     child: AspectRatio(
                       aspectRatio: 100 / 100,
                       child: ImageLoading(
@@ -343,10 +348,10 @@ class _BuyItemState extends State<BuyItem> {
                     ),
                   ),
                   const SizedBox(
-                    width: 30,
+                    width: 15,
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: 5,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -359,7 +364,7 @@ class _BuyItemState extends State<BuyItem> {
                         ),
                         Expanded(
                           child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 8),
+                            margin: const EdgeInsets.symmetric(vertical: 8),
                             child: Text(
                               "Loại: ${unit.name} | ${widget.oCcy.format(realPrice)}đ",
                               style: const TextStyle(
@@ -476,11 +481,11 @@ class _BuyItemState extends State<BuyItem> {
               ),
             ),
             productFuture == null
-                ? SizedBox()
+                ? const SizedBox()
                 : FutureBuilder<Products>(
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return SizedBox();
+                        return const SizedBox();
                       }
                       return const Center(
                         child: CircularProgressIndicator(),
