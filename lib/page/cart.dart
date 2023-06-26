@@ -11,10 +11,13 @@ import '../constants.dart';
 import '../global/app_state.dart';
 import '../model/package_result.dart';
 import '../model/product_package.dart';
+import 'address_select.dart';
+import 'component/address_item.dart';
 import 'product_detail.dart';
 
 class Cart extends StatefulWidget {
-  const Cart({super.key});
+  final List<ListResult>? buyItem;
+  const Cart({super.key, required this.buyItem});
 
   @override
   State<Cart> createState() => _CartState();
@@ -22,12 +25,24 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   final oCcy = NumberFormat("#,##0", "en_US");
+  final List<ListResult> buyItem = [];
+  late bool isCheckOut;
+
+  @override
+  void initState() {
+    super.initState();
+    isCheckOut = widget.buyItem != null;
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.read<MyAppState>();
     return SafeArea(
       child: FutureBuilder<PackageResult>(
-        future: appState.futurePackage,
+        future: isCheckOut
+            ? Future<PackageResult>.value(
+                PackageResult(listResult: widget.buyItem!))
+            : appState.futurePackage,
         builder: (context, snapshot) {
           PackageResult? package;
           if (snapshot.hasData) {
@@ -93,7 +108,17 @@ class _CartState extends State<Cart> {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: package != null ? () {} : null,
+                      onPressed: package != null
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Cart(
+                                          buyItem: buyItem,
+                                        )),
+                              );
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
                         elevation: 0.0,
                         shadowColor: Colors.transparent,
@@ -103,9 +128,9 @@ class _CartState extends State<Cart> {
                           borderRadius: BorderRadius.circular(10), // <-- Radius
                         ),
                       ),
-                      child: const Text(
-                        "Check Out",
-                        style: TextStyle(
+                      child: Text(
+                        isCheckOut ? "Buy" : "Check Out",
+                        style: const TextStyle(
                             color: secondBackgroundColor,
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
@@ -148,9 +173,9 @@ class _CartState extends State<Cart> {
                       const SizedBox(
                         width: 10,
                       ),
-                      const Text(
-                        "Shopping Cart",
-                        style: TextStyle(
+                      Text(
+                        isCheckOut ? "Check Out" : "Shopping Cart",
+                        style: const TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -158,11 +183,27 @@ class _CartState extends State<Cart> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    '${package == null ? 0 : package.calcTotal()} items',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
+                  isCheckOut
+                      ? AddressItem(
+                          groupValue: '',
+                          label: 'Địa Chỉ Nhận Hàng',
+                          onChanged: (String value) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddressSelector(),
+                              ),
+                            );
+                          },
+                          value: '',
+                          enableDivider: false,
+                          isRadio: false,
+                        )
+                      : Text(
+                          '${package == null ? 0 : package.calcTotal()} items',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                   const SizedBox(
                     height: 5,
                   ),
@@ -190,6 +231,15 @@ class _CartState extends State<Cart> {
                                     PageIndex.cart, package!.calcTotal());
                               },
                               delete: () => package!.listResult.removeAt(index),
+                              value: isCheckOut ? null : false,
+                              onChanged: (bool value) {
+                                if (value) {
+                                  buyItem.add(package!.listResult[index]);
+                                } else {
+                                  buyItem.remove(package!.listResult[index]);
+                                }
+                                setState(() {});
+                              },
                             ),
                             scrollDirection: Axis.vertical,
                             itemCount: package.listResult.length,
@@ -213,12 +263,16 @@ class BuyItem extends StatefulWidget {
   final ListResult item;
   final VoidCallback refresh;
   final VoidCallback delete;
+  final bool? value;
+  final ValueChanged<bool> onChanged;
   const BuyItem({
     super.key,
     required this.item,
     required this.oCcy,
     required this.refresh,
     required this.delete,
+    required this.value,
+    required this.onChanged,
   });
 
   @override
@@ -226,6 +280,8 @@ class BuyItem extends StatefulWidget {
 }
 
 class _BuyItemState extends State<BuyItem> {
+  late bool _isSelected = widget.value ?? false;
+  late bool isEnableSelectBox = widget.value != null;
   bool processing = false;
   Future<Products>? productFuture;
   @override
@@ -233,30 +289,46 @@ class _BuyItemState extends State<BuyItem> {
     ListUnit unit = widget.item.beerSubmitData.listUnit[0];
     double realPrice = unit.price * (1 - unit.discount / 100);
     return GestureDetector(
-      onTap: () {
-        productFuture = fetchProduct(widget.item.beerId);
-        productFuture!.then(
-          (value) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductDetail(
-                  product: value,
-                ),
-              ),
-            );
-          },
-        );
-        setState(() {});
-      },
+      onTap: isEnableSelectBox
+          ? () {
+              productFuture = fetchProduct(widget.item.beerId);
+              productFuture!.then(
+                (value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetail(
+                        product: value,
+                      ),
+                    ),
+                  );
+                },
+              );
+              setState(() {});
+            }
+          : null,
       child: SizedBox(
         height: 120,
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
               child: Row(
                 children: [
+                  isEnableSelectBox
+                      ? Checkbox(
+                          value: _isSelected,
+                          onChanged: (bool? newValue) {
+                            _isSelected = newValue ?? false;
+                            widget.onChanged(newValue!);
+                          },
+                        )
+                      : SizedBox(),
+                  isEnableSelectBox
+                      ? const SizedBox(
+                          width: 5,
+                        )
+                      : SizedBox(),
                   AspectRatio(
                     aspectRatio: 100 / 100,
                     child: ImageLoading(
@@ -319,34 +391,38 @@ class _BuyItemState extends State<BuyItem> {
                               ),
                               child: Row(
                                 children: [
-                                  TextButton(
-                                    onPressed: processing
-                                        ? null
-                                        : () {
-                                            bool isGreatThan1 =
-                                                widget.item.numberUnit > 1;
-                                            isGreatThan1
-                                                ? changePackage(unit, -1)
-                                                : showDeleteDialog(
-                                                    context,
-                                                    () => removeItem(unit),
-                                                  );
-                                          },
-                                    style: TextButton.styleFrom(
-                                      minimumSize: Size.zero,
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      padding: const EdgeInsets.all(10),
-                                    ),
-                                    child: const Text(
-                                      "-",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: highTextColor,
-                                      ),
-                                    ),
-                                  ),
+                                  isEnableSelectBox
+                                      ? TextButton(
+                                          onPressed: processing
+                                              ? null
+                                              : () {
+                                                  bool isGreatThan1 =
+                                                      widget.item.numberUnit >
+                                                          1;
+                                                  isGreatThan1
+                                                      ? changePackage(unit, -1)
+                                                      : showDeleteDialog(
+                                                          context,
+                                                          () =>
+                                                              removeItem(unit),
+                                                        );
+                                                },
+                                          style: TextButton.styleFrom(
+                                            minimumSize: Size.zero,
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                          child: const Text(
+                                            "-",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: highTextColor,
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox(),
                                   ConstrainedBox(
                                     constraints: const BoxConstraints.tightFor(
                                         width: 30),
@@ -360,25 +436,27 @@ class _BuyItemState extends State<BuyItem> {
                                       ),
                                     ),
                                   ),
-                                  TextButton(
-                                    onPressed: processing
-                                        ? null
-                                        : () => changePackage(unit, 1),
-                                    style: TextButton.styleFrom(
-                                      minimumSize: Size.zero,
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      padding: const EdgeInsets.all(10),
-                                    ),
-                                    child: const Text(
-                                      "+",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: highTextColor,
-                                      ),
-                                    ),
-                                  ),
+                                  isEnableSelectBox
+                                      ? TextButton(
+                                          onPressed: processing
+                                              ? null
+                                              : () => changePackage(unit, 1),
+                                          style: TextButton.styleFrom(
+                                            minimumSize: Size.zero,
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                          child: const Text(
+                                            "+",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: highTextColor,
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox(),
                                 ],
                               ),
                             ),

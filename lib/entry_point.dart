@@ -91,7 +91,10 @@ class _EntryPointState extends State<EntryPoint> {
               if (pageIndex == PageIndex.cart) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Cart()),
+                  MaterialPageRoute(
+                      builder: (context) => const Cart(
+                            buyItem: null,
+                          )),
                 );
               } else {
                 setState(() {

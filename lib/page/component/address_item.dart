@@ -10,6 +10,7 @@ class AddressItem extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.enableDivider = true,
+    this.isRadio = true,
   });
 
   final bool enableDivider;
@@ -18,11 +19,15 @@ class AddressItem extends StatelessWidget {
   final String value;
   final ValueChanged<String> onChanged;
 
+  final bool isRadio;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         if (value != groupValue) {
+          onChanged(value);
+        } else if (!isRadio) {
           onChanged(value);
         }
       },
@@ -30,6 +35,7 @@ class AddressItem extends StatelessWidget {
         color: secondBackgroundColor,
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Radio<String>(
               groupValue: groupValue,
@@ -57,6 +63,15 @@ class AddressItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    !isRadio
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              label,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          )
+                        : const SizedBox(),
                     Text.rich(
                       TextSpan(text: "Nguyễn Phong", children: [
                         TextSpan(
@@ -92,6 +107,12 @@ class AddressItem extends StatelessWidget {
                 ),
               ),
             ),
+            isRadio
+                ? SizedBox()
+                : const Image(
+                    filterQuality: FilterQuality.high,
+                    image: AssetImage("assets/icons/Next.png"),
+                  )
           ],
         ),
       ),

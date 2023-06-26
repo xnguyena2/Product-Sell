@@ -18,7 +18,7 @@ class _LocationSelectState extends State<LocationSelect> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: BackAppBar(),
+        appBar: const BackAppBar(),
         backgroundColor: backgroundColor,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +32,7 @@ class _LocationSelectState extends State<LocationSelect> {
                   child: Column(
                     children: [
                       // Expanded(child: Container()),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       AnimatedSize(
@@ -43,8 +43,8 @@ class _LocationSelectState extends State<LocationSelect> {
                         ),
                       ),
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 20),
                         decoration: BoxDecoration(
                           color: backgroundColor,
                           borderRadius:
@@ -62,11 +62,11 @@ class _LocationSelectState extends State<LocationSelect> {
               ],
             ),
             Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               child: const Text(
                 "Tỉnh/Thành Phố",
                 style: TextStyle(color: secondTextColor, fontSize: 14),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             ),
             Expanded(
               child: ListView.separated(
@@ -75,7 +75,7 @@ class _LocationSelectState extends State<LocationSelect> {
                 scrollDirection: Axis.vertical,
                 itemCount: 40,
                 separatorBuilder: (BuildContext context, int index) =>
-                    Divider(height: 1),
+                    const Divider(height: 1),
               ),
             ),
           ],
@@ -89,14 +89,14 @@ class _LocationSelectState extends State<LocationSelect> {
       color: secondBackgroundColor,
       child: Row(
         children: [
-          SizedBox(
+          const SizedBox(
             width: 30,
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             child: Text(
               "tinh $index",
-              style: TextStyle(),
+              style: const TextStyle(),
             ),
           ),
         ],
@@ -111,7 +111,7 @@ class _LocationSelectState extends State<LocationSelect> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 21,
           ),
           GestureDetector(
@@ -140,7 +140,7 @@ class _LocationSelectState extends State<LocationSelect> {
               });
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
         ],
@@ -149,7 +149,7 @@ class _LocationSelectState extends State<LocationSelect> {
   }
 
   SizedBox divider() {
-    return SizedBox(
+    return const SizedBox(
       height: 50,
       child: VerticalDivider(
         width: 20,
@@ -170,7 +170,7 @@ class _LocationSelectState extends State<LocationSelect> {
             child: isActive ? activeCircle() : nromalCircle(),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 20,
         ),
         Text(
@@ -189,7 +189,7 @@ class _LocationSelectState extends State<LocationSelect> {
   }
 
   CircleAvatar activeCircle() {
-    return CircleAvatar(
+    return const CircleAvatar(
       radius: 8,
       backgroundColor: activeColor,
       child: CircleAvatar(

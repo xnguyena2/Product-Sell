@@ -508,7 +508,10 @@ class _ProductDetailState extends State<ProductDetail>
                     onPressed: () async {
                       await Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const Cart()),
+                        MaterialPageRoute(
+                            builder: (context) => const Cart(
+                                  buyItem: null,
+                                )),
                       );
                       setState(() {});
                     },
