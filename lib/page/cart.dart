@@ -314,11 +314,13 @@ class _BuyItemState extends State<BuyItem> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: Row(
                 children: [
                   isEnableSelectBox
                       ? Checkbox(
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                           value: _isSelected,
                           onChanged: (bool? newValue) {
                             _isSelected = newValue ?? false;
@@ -344,7 +346,7 @@ class _BuyItemState extends State<BuyItem> {
                     width: 30,
                   ),
                   Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
