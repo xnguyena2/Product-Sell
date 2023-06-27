@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import 'boostrap.dart';
 
 class PackageResult {
@@ -15,6 +17,17 @@ class PackageResult {
   int calcTotal() {
     return listResult.fold(
         0, (previousValue, element) => previousValue + element.numberUnit);
+  }
+
+  void sort() {
+    listResult.sort(
+      (a, b) =>
+          stringToDateTime(b.createat).compareTo(stringToDateTime(a.createat)),
+    );
+  }
+
+  DateTime stringToDateTime(String dateValue) {
+    return DateFormat("y-MM-ddThh:mm:ss.sssZ").parse(dateValue);
   }
 
   double totalPrice() {

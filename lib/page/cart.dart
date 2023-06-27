@@ -49,6 +49,7 @@ class _CartState extends State<Cart> {
           PackageResult? package;
           if (snapshot.hasData) {
             package = snapshot.data;
+            package!.sort();
           }
           return Scaffold(
             bottomNavigationBar: Container(
