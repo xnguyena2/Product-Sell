@@ -18,8 +18,11 @@ class ProductDetailPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final oCcy = NumberFormat("#,##0", "en_US");
     String productImageUrl = product.images?[0].large ?? "error";
-    ListUnit minUnit = product.listUnit.reduce(
-        (value, element) => value.price < element.price ? value : element);
+    ListUnit minUnit = product.listUnit.reduce((value, element) =>
+        value.price * (1 - value.discount / 100) <
+                element.price * (1 - element.discount / 100)
+            ? value
+            : element);
     return Container(
       padding: const EdgeInsets.only(bottom: 5),
       decoration: const BoxDecoration(
