@@ -41,7 +41,10 @@ class SearchButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Image.asset("assets/icons/Search.png"),
+              Image.asset(
+                "assets/icons/Search.png",
+                filterQuality: FilterQuality.high,
+              ),
               const SizedBox(width: 20),
               const Text(
                 "Search Product",

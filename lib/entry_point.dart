@@ -10,10 +10,12 @@ import 'package:provider/provider.dart';
 import 'component/main_bars.dart';
 import 'constants.dart';
 import 'global/app_state.dart';
+import 'model/address_data.dart';
 import 'model/boostrap.dart';
 import 'model/package_result.dart';
 import 'page/cart.dart';
 import 'page/home.dart';
+import 'page/location_select.dart';
 import 'page/page_index.dart';
 import 'page/search.dart';
 import 'package:http/http.dart';
@@ -80,7 +82,9 @@ class _EntryPointState extends State<EntryPoint> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: Container(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.only(
+            top: 4,
+          ),
           // margin: const EdgeInsets.symmetric(horizontal: 24),
           decoration: const BoxDecoration(
             color: dartBackgroundColor,

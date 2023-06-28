@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 const String host = "https://product-sell.onrender.com";
 
-const String deviceID = "1687247699000";
+late String deviceID;
 
 const double carouselAspectRatio = 315 / 219;
 

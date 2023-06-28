@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:product_sell/api/post.dart';
+import 'package:product_sell/model/address_data.dart';
 import 'package:product_sell/model/boostrap.dart';
 import 'package:product_sell/page/component/image_loading.dart';
 import 'package:product_sell/page/page_index.dart';
@@ -185,20 +190,42 @@ class _CartState extends State<Cart> {
                     height: 20,
                   ),
                   isCheckOut
-                      ? AddressItem(
-                          groupValue: '',
-                          label: 'Địa Chỉ Nhận Hàng',
-                          onChanged: (String value) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddressSelector(),
-                              ),
+                      ? ValueListenableBuilder<Box>(
+                          valueListenable: Hive.box('settings')
+                              .listenable(keys: ['defaultAddress']),
+                          builder: (context, box, child) {
+                            String? dataText = box.get('defaultAddress');
+                            if (dataText == null) {
+                              return TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddressSelector(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text("Chọn địa chỉ giao hàng!"));
+                            }
+                            AddressData addressData =
+                                AddressData.fromJson(jsonDecode(dataText));
+                            return AddressItem(
+                              groupValue: '',
+                              label: 'Địa Chỉ Nhận Hàng',
+                              onChanged: (String value) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddressSelector(),
+                                  ),
+                                );
+                              },
+                              value: '',
+                              enableDivider: false,
+                              isRadio: false,
+                              addressData: addressData,
                             );
                           },
-                          value: '',
-                          enableDivider: false,
-                          isRadio: false,
                         )
                       : Text(
                           '${package == null ? 0 : package.calcTotal()} items',

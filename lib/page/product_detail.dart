@@ -505,7 +505,10 @@ class _ProductDetailState extends State<ProductDetail>
               child: Stack(
                 children: [
                   IconButton(
-                    icon: Image.asset("assets/icons/Package.png"),
+                    icon: Image.asset(
+                      "assets/icons/Package.png",
+                      filterQuality: FilterQuality.high,
+                    ),
                     onPressed: () async {
                       await Navigator.push(
                         context,

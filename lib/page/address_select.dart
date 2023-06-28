@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:product_sell/model/address_data.dart';
+import 'package:product_sell/model/region.dart';
 
 import '../constants.dart';
 import 'component/address_item.dart';
 import 'component/app_bar.dart';
+import 'reciver_info.dart';
 
 class AddressSelector extends StatefulWidget {
   const AddressSelector({super.key});
@@ -27,21 +34,36 @@ class _AddressSelectorState extends State<AddressSelector> {
                 padding: EdgeInsets.all(15),
               ),
             ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                childCount: 20,
-                (context, index) => AddressItem(
-                  label: 'This is the first label text',
-                  value: "address${index}",
-                  groupValue: _isRadioSelected,
-                  onChanged: (String newValue) {
-                    setState(() {
-                      _isRadioSelected = newValue;
-                    });
-                  },
-                  enableDivider: index < 19,
-                ),
-              ),
+            ValueListenableBuilder<Box>(
+              valueListenable:
+                  Hive.box('settings').listenable(keys: ['listAddress']),
+              builder: (context, box, child) {
+                ListAddressData listAddressData =
+                    ListAddressData(listAddress: []);
+                String? dataText = box.get('listAddress');
+                if (dataText != null) {
+                  listAddressData =
+                      ListAddressData.fromJson(jsonDecode(dataText));
+                }
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: listAddressData.listAddress.length,
+                    (context, index) => AddressItem(
+                      label: '',
+                      value: '',
+                      groupValue: _isRadioSelected,
+                      onChanged: (String newValue) {
+                        setState(() {
+                          _isRadioSelected = newValue;
+                        });
+                      },
+                      enableDivider:
+                          index < listAddressData.listAddress.length - 1,
+                      addressData: listAddressData.listAddress[index],
+                    ),
+                  ),
+                );
+              },
             ),
             const SliverToBoxAdapter(
               child: Divider(
@@ -50,7 +72,25 @@ class _AddressSelectorState extends State<AddressSelector> {
             ),
             SliverToBoxAdapter(
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReciverInfo(
+                        addressData: AddressData(
+                            addressID: "",
+                            deviceID: deviceID,
+                            reciverFullName: "",
+                            phoneNumber: "",
+                            houseNumber: "",
+                            region: Region(name: "", id: -1),
+                            district: Region(name: "", id: -1),
+                            ward: Region(name: "", id: -1),
+                            regionTextFormat: ""),
+                      ),
+                    ),
+                  );
+                },
                 style: TextButton.styleFrom(
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,

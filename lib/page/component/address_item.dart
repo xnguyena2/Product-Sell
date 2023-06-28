@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
+import '../../model/address_data.dart';
 
 class AddressItem extends StatelessWidget {
   const AddressItem({
@@ -11,8 +12,10 @@ class AddressItem extends StatelessWidget {
     required this.onChanged,
     this.enableDivider = true,
     this.isRadio = true,
+    required this.addressData,
   });
 
+  final AddressData addressData;
   final bool enableDivider;
   final String label;
   final String groupValue;
@@ -68,38 +71,38 @@ class AddressItem extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Text(
                               label,
-                              style: const TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 15),
                             ),
                           )
                         : const SizedBox(),
                     Text.rich(
-                      TextSpan(text: "Nguyễn Phong", children: [
+                      TextSpan(text: addressData.reciverFullName, children: [
                         TextSpan(
-                          text: "  |  0794566255",
-                          style: TextStyle(
+                          text: "  |  ${addressData.phoneNumber}",
+                          style: const TextStyle(
                             color: secondTextColor,
                           ),
                         )
                       ]),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Text(
-                      "Đài Truyền Thanh Duy Xuyên Gần Cầu Chìm",
-                      style: TextStyle(
+                      addressData.houseNumber,
+                      style: const TextStyle(
                         color: secondTextColor,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "Xã Duy Trung, Huyện Duy Xuyên, Quảng Nam",
-                      style: TextStyle(
+                      addressData.regionTextFormat,
+                      style: const TextStyle(
                         color: secondTextColor,
                       ),
                     ),

@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'constants.dart';
 import 'global/app_state.dart';
 import 'entry_point.dart';
 import 'my_custom_scroll_behavior.dart';
@@ -16,9 +18,25 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-void main() {
+Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
+  await Hive.initFlutter();
+  await Hive.openBox('settings');
+  getDeviceID();
   runApp(const MyApp());
+}
+
+void getDeviceID() async {
+  var box = Hive.box('settings');
+  String? device_id = await box.get('deviceID');
+  if (device_id == null) {
+    print("create new device ID");
+    device_id = "1687247699000";
+    box.put('deviceID', device_id);
+  }
+  print('device id: $device_id');
+  print(DateTime.now().millisecondsSinceEpoch);
+  deviceID = device_id;
 }
 
 class MyApp extends StatelessWidget {

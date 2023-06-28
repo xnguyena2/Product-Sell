@@ -313,7 +313,10 @@ class _SearchPageState extends State<SearchPage> {
                 resetFilter();
                 search(txt);
               },
-              child: Image.asset("assets/icons/Search.png"),
+              child: Image.asset(
+                "assets/icons/Search.png",
+                filterQuality: FilterQuality.high,
+              ),
             ),
             const SizedBox(width: 20),
             Expanded(
