@@ -7,7 +7,6 @@ import '../component/search_bar.dart';
 import '../constants.dart';
 import '../model/boostrap.dart';
 import '../model/debug_value.dart';
-import '../model/search_result.dart';
 import 'component/carousel.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<SearchResult>? futureLoadMore;
+  late Future<BootStrap> futureBootstrap;
   bool loading = false;
   bool noMore = false;
   List<Products> listProduct = [];
@@ -40,10 +39,15 @@ class _HomePageState extends State<HomePage> {
     return true;
   }
 
+  void refreshLoad() {
+    noMore = false;
+    currentPage = 0;
+  }
+
   void loadMore() {
     loading = true;
     setState(() {});
-    currentPage++;
+    currentPage;
     fetchMoreResult(currentPage).then((value) {
       List<Products> moreProduct = value.result;
       noMore = moreProduct.isEmpty;
@@ -51,6 +55,12 @@ class _HomePageState extends State<HomePage> {
       loading = false;
       setState(() {});
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    futureBootstrap = widget.futureBootstrap;
   }
 
   @override
@@ -64,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return FutureBuilder<BootStrap>(
-      future: widget.futureBootstrap,
+      future: futureBootstrap,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return mainContent(snapshot.data!, screenWidth);
@@ -87,114 +97,122 @@ class _HomePageState extends State<HomePage> {
         Expanded(
           child: NotificationListener<ScrollNotification>(
             onNotification: _scrollListener,
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Carousel(
-                        data: data.carousel,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        child: SizedBox(
-                          height: 0.1,
-                          width: 0.1,
-                          child: OverflowBox(
-                            maxWidth: 300,
-                            maxHeight: 100,
-                            minWidth: 0,
-                            minHeight: 0,
-                            child: Transform.translate(
-                              offset: const Offset(0, 15),
-                              child: floatBanner(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: ColoredBox(
-                    color: secondBackgroundColor,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+            child: RefreshIndicator(
+              onRefresh: () {
+                refreshLoad();
+                futureBootstrap = fetchBootstrap();
+                setState(() {});
+                return futureBootstrap;
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Transform.translate(
-                          offset: const Offset(0, -(50 - 50 / 2 - 15 - 0.1)),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              floatBanner(),
-                            ],
-                          ),
+                        Carousel(
+                          data: data.carousel,
                         ),
-                        SizedBox(
-                          height: 220,
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            gridDelegate:
-                                const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 110,
-                              childAspectRatio: 10 / 5,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 50,
+                        Positioned(
+                          bottom: 0,
+                          child: SizedBox(
+                            height: 0.1,
+                            width: 0.1,
+                            child: OverflowBox(
+                              maxWidth: 300,
+                              maxHeight: 100,
+                              minWidth: 0,
+                              minHeight: 0,
+                              child: Transform.translate(
+                                offset: const Offset(0, 15),
+                                child: floatBanner(),
+                              ),
                             ),
-                            itemCount: listCategory.length,
-                            itemBuilder: (BuildContext ctx, index) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: secondBackgroundColor,
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                          color: normalBorderColor, width: 1),
-                                    ),
-                                    child: AspectRatio(
-                                      aspectRatio: 1 / 1,
-                                      child: ImageLoading(
-                                          url: listCategory[index].imageUrl),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    listCategory[index].title,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                        fontSize: 10, color: highTextColor),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              );
-                            },
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                ListProduct(products: listProduct),
-                SliverToBoxAdapter(
-                  child: loading
-                      ? const Center(
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(),
+                  SliverToBoxAdapter(
+                    child: ColoredBox(
+                      color: secondBackgroundColor,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Transform.translate(
+                            offset: const Offset(0, -(50 - 50 / 2 - 15 - 0.1)),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                floatBanner(),
+                              ],
+                            ),
                           ),
-                        )
-                      : const SizedBox(),
-                ),
-              ],
+                          SizedBox(
+                            height: 220,
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 110,
+                                childAspectRatio: 10 / 5,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 50,
+                              ),
+                              itemCount: listCategory.length,
+                              itemBuilder: (BuildContext ctx, index) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: secondBackgroundColor,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                            color: normalBorderColor, width: 1),
+                                      ),
+                                      child: AspectRatio(
+                                        aspectRatio: 1 / 1,
+                                        child: ImageLoading(
+                                            url: listCategory[index].imageUrl),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      listCategory[index].title,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontSize: 10, color: highTextColor),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  ListProduct(products: listProduct),
+                  SliverToBoxAdapter(
+                    child: loading
+                        ? const Center(
+                            child: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 import '../constants.dart';
+import '../model/boostrap.dart';
 import '../model/package_item_remove.dart';
 import '../model/package_result.dart';
 import '../model/product_package.dart';
@@ -11,6 +12,17 @@ import '../model/search_query.dart';
 import '../model/search_result.dart';
 import '../model/user_info_query.dart';
 import '../utils/vntone.dart';
+
+Future<BootStrap> fetchBootstrap() async {
+  final response = await get(Uri.parse('${host}/clientdevice/bootstrap'));
+
+  if (response.statusCode == 200) {
+    // print(response.body);
+    return BootStrap.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
 
 Future<SearchResult> fetchMoreResult(int page) async {
   final filter = SearchQuery("all", page, 24, "default");

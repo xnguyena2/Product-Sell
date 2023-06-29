@@ -10,12 +10,10 @@ import 'package:provider/provider.dart';
 import 'component/main_bars.dart';
 import 'constants.dart';
 import 'global/app_state.dart';
-import 'model/address_data.dart';
 import 'model/boostrap.dart';
 import 'model/package_result.dart';
 import 'page/cart.dart';
 import 'page/home.dart';
-import 'page/location_select.dart';
 import 'page/page_index.dart';
 import 'page/search.dart';
 import 'package:http/http.dart';
@@ -31,17 +29,6 @@ class _EntryPointState extends State<EntryPoint> {
   PageIndex currentPage = PageIndex.home;
   late Future<BootStrap> futureBootstrap;
   late Future<PackageResult> futurePackage;
-
-  Future<BootStrap> fetchBootstrap() async {
-    final response = await get(Uri.parse('${host}/clientdevice/bootstrap'));
-
-    if (response.statusCode == 200) {
-      // print(response.body);
-      return BootStrap.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
 
   @override
   void initState() {
