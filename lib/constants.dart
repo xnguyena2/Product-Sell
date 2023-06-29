@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 const String host = "https://product-sell.onrender.com";
 
+const String hiveSettingBox = 'settings';
+const String hiveDefaultAddressID = 'defaultAddress';
+const String hiveListAddressID = 'listAddress';
+
 late String deviceID;
 
 const double carouselAspectRatio = 315 / 219;
@@ -20,3 +24,7 @@ const Color highTextColor = Colors.black;
 const Color activeColor = Colors.red;
 const Color activeColor05 = Color.fromARGB(128, 244, 67, 54);
 const Color activeColor08 = Color.fromARGB(205, 244, 67, 54);
+
+String generateID() {
+  return DateTime.now().millisecondsSinceEpoch.toString();
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import '../../model/address_data.dart';
+import '../reciver_info.dart';
 
 class AddressItem extends StatelessWidget {
   const AddressItem({
@@ -13,6 +14,8 @@ class AddressItem extends StatelessWidget {
     this.enableDivider = true,
     this.isRadio = true,
     required this.addressData,
+    required this.onDeleteAddress,
+    required this.onUpdateAddress,
   });
 
   final AddressData addressData;
@@ -21,6 +24,8 @@ class AddressItem extends StatelessWidget {
   final String groupValue;
   final String value;
   final ValueChanged<String> onChanged;
+  final VoidCallback onDeleteAddress;
+  final VoidCallback onUpdateAddress;
 
   final bool isRadio;
 
@@ -111,7 +116,25 @@ class AddressItem extends StatelessWidget {
               ),
             ),
             isRadio
-                ? SizedBox()
+                ? IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReciverInfo(
+                            addressData: addressData,
+                            done: onUpdateAddress,
+                            delete: onDeleteAddress,
+                            isEdit: true,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Image(
+                      filterQuality: FilterQuality.high,
+                      image: AssetImage("assets/icons/Edit.png"),
+                    ),
+                  )
                 : const Image(
                     filterQuality: FilterQuality.high,
                     image: AssetImage("assets/icons/Next.png"),

@@ -21,19 +21,21 @@ class MyHttpOverrides extends HttpOverrides {
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   await Hive.initFlutter();
-  await Hive.openBox('settings');
+  await Hive.openBox(hiveSettingBox);
   getDeviceID();
   runApp(const MyApp());
 }
 
-void getDeviceID() async {
-  var box = Hive.box('settings');
-  String? device_id = await box.get('deviceID');
+void getDeviceID() {
+  var box = Hive.box(hiveSettingBox);
+  String? device_id = box.get('deviceID');
   if (device_id == null) {
     print("create new device ID");
     device_id = "1687247699000";
     box.put('deviceID', device_id);
   }
+  box.delete(hiveListAddressID);
+  box.delete(hiveDefaultAddressID);
   print('device id: $device_id');
   print(DateTime.now().millisecondsSinceEpoch);
   deviceID = device_id;

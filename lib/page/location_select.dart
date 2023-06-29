@@ -72,6 +72,12 @@ class _LocationSelectState extends State<LocationSelect> {
     }
   }
 
+  void doneEnter() {
+    addressData.regionTextFormat =
+        '${addressData.ward.name}, ${addressData.district.name}, ${addressData.region.name}';
+    Navigator.pop(context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -186,6 +192,7 @@ class _LocationSelectState extends State<LocationSelect> {
                             selectedRegion = listRegion.listResult[index];
                             wardName = currentLocation = selectedRegion.name;
                             addressData.ward = selectedRegion;
+                            doneEnter();
                             break;
                         }
                         setState(() {});

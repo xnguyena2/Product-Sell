@@ -96,7 +96,7 @@ class _CarouselState extends State<Carousel> {
                         (i, e) => Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5.0),
                           child: CircleAvatar(
-                              radius: 4,
+                              radius: 3,
                               backgroundColor: currentIndex == i
                                   ? activeColor08
                                   : normalBorderColor08),

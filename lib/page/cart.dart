@@ -182,7 +182,7 @@ class _CartState extends State<Cart> {
                       Text(
                         isCheckOut ? "Check Out" : "Shopping Cart",
                         style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -191,24 +191,30 @@ class _CartState extends State<Cart> {
                   ),
                   isCheckOut
                       ? ValueListenableBuilder<Box>(
-                          valueListenable: Hive.box('settings')
-                              .listenable(keys: ['defaultAddress']),
+                          valueListenable: Hive.box(hiveSettingBox).listenable(
+                              keys: [hiveDefaultAddressID, hiveListAddressID]),
                           builder: (context, box, child) {
-                            String? dataText = box.get('defaultAddress');
+                            String? dataText = box.get(hiveDefaultAddressID);
                             if (dataText == null) {
-                              return TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AddressSelector(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text("Chọn địa chỉ giao hàng!"));
+                              return addNewAddress(context);
                             }
-                            AddressData addressData =
-                                AddressData.fromJson(jsonDecode(dataText));
+                            String key = dataText;
+                            dataText = box.get(hiveListAddressID);
+
+                            if (dataText == null) {
+                              return addNewAddress(context);
+                            }
+
+                            ListAddressData listAddressData =
+                                ListAddressData.fromJson(jsonDecode(dataText));
+
+                            AddressData? addressData =
+                                listAddressData.listAddress[key];
+
+                            if (addressData == null) {
+                              return addNewAddress(context);
+                            }
+
                             return AddressItem(
                               groupValue: '',
                               label: 'Địa Chỉ Nhận Hàng',
@@ -224,6 +230,8 @@ class _CartState extends State<Cart> {
                               enableDivider: false,
                               isRadio: false,
                               addressData: addressData,
+                              onDeleteAddress: () {},
+                              onUpdateAddress: () {},
                             );
                           },
                         )
@@ -286,6 +294,47 @@ class _CartState extends State<Cart> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Center addNewAddress(BuildContext context) {
+    return Center(
+      child: TextButton(
+        style: TextButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+            side: const BorderSide(width: 2, color: normalBorderColor05),
+          ),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const EdgeInsets.all(20),
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddressSelector(),
+            ),
+          );
+        },
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image(
+              filterQuality: FilterQuality.high,
+              image: AssetImage("assets/icons/AddAddress.png"),
+            ),
+            SizedBox(
+              width: 15,
+            ),
+            Text(
+              "Chọn địa chỉ giao hàng!",
+              style: TextStyle(color: highTextColor),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -393,7 +442,6 @@ class _BuyItemState extends State<BuyItem> {
                           widget.item.beerSubmitData.name,
                           style: const TextStyle(
                             fontSize: 17,
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         Expanded(

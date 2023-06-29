@@ -19,28 +19,70 @@ class AddressSelector extends StatefulWidget {
 }
 
 class _AddressSelectorState extends State<AddressSelector> {
-  String _isRadioSelected = "address1";
+  late ListAddressData listAddressData;
+  late AddressData selectedAddress;
+  late String defaultAddressKey;
+
+  void updateListAddress() {
+    var box = Hive.box(hiveSettingBox);
+    box.put(hiveListAddressID, jsonEncode(listAddressData.toJson()));
+  }
+
+  void updateSelectedAddress(String key) {
+    var box = Hive.box(hiveSettingBox);
+    box.put(hiveDefaultAddressID, key);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    var box = Hive.box(hiveSettingBox);
+    String? dataText = box.get(hiveListAddressID);
+    if (dataText != null) {
+      listAddressData = ListAddressData.fromJson(jsonDecode(dataText));
+    } else {
+      listAddressData = ListAddressData(listAddress: <String, AddressData>{});
+    }
+
+    dataText = box.get(hiveDefaultAddressID);
+    if (dataText == null || listAddressData.listAddress[dataText] == null) {
+      defaultAddressKey = '';
+      selectedAddress = AddressData(
+          addressID: "",
+          deviceID: deviceID,
+          reciverFullName: "",
+          phoneNumber: "",
+          houseNumber: "",
+          region: Region(name: "", id: -1),
+          district: Region(name: "", id: -1),
+          ward: Region(name: "", id: -1),
+          regionTextFormat: "");
+    } else {
+      defaultAddressKey = dataText;
+      selectedAddress = listAddressData.listAddress[dataText]!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: BackAppBar(),
+        appBar: const BackAppBar(),
         backgroundColor: backgroundColor,
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: Container(
-                child: Text("Địa Chi"),
-                padding: EdgeInsets.all(15),
+                padding: const EdgeInsets.all(15),
+                child: const Text("Địa Chi"),
               ),
             ),
             ValueListenableBuilder<Box>(
-              valueListenable:
-                  Hive.box('settings').listenable(keys: ['listAddress']),
+              valueListenable: Hive.box(hiveSettingBox)
+                  .listenable(keys: [hiveListAddressID]),
               builder: (context, box, child) {
-                ListAddressData listAddressData =
-                    ListAddressData(listAddress: []);
-                String? dataText = box.get('listAddress');
+                String? dataText = box.get(hiveListAddressID);
                 if (dataText != null) {
                   listAddressData =
                       ListAddressData.fromJson(jsonDecode(dataText));
@@ -48,19 +90,32 @@ class _AddressSelectorState extends State<AddressSelector> {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     childCount: listAddressData.listAddress.length,
-                    (context, index) => AddressItem(
-                      label: '',
-                      value: '',
-                      groupValue: _isRadioSelected,
-                      onChanged: (String newValue) {
-                        setState(() {
-                          _isRadioSelected = newValue;
-                        });
-                      },
-                      enableDivider:
-                          index < listAddressData.listAddress.length - 1,
-                      addressData: listAddressData.listAddress[index],
-                    ),
+                    (context, index) {
+                      String key =
+                          listAddressData.listAddress.keys.elementAt(index);
+                      AddressData data = listAddressData.listAddress[key]!;
+                      return AddressItem(
+                        label: '',
+                        value: key,
+                        groupValue: defaultAddressKey,
+                        onChanged: (String newValue) {
+                          defaultAddressKey = key;
+                          selectedAddress = data;
+                          updateSelectedAddress(key);
+                          setState(() {});
+                        },
+                        enableDivider:
+                            index < listAddressData.listAddress.length - 1,
+                        addressData: data,
+                        onDeleteAddress: () {
+                          listAddressData.listAddress.remove(key);
+                          updateListAddress();
+                        },
+                        onUpdateAddress: () {
+                          updateListAddress();
+                        },
+                      );
+                    },
                   ),
                 );
               },
@@ -72,21 +127,29 @@ class _AddressSelectorState extends State<AddressSelector> {
             ),
             SliverToBoxAdapter(
               child: TextButton(
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  AddressData addressData = AddressData(
+                      addressID: "",
+                      deviceID: deviceID,
+                      reciverFullName: "",
+                      phoneNumber: "",
+                      houseNumber: "",
+                      region: Region(name: "", id: -1),
+                      district: Region(name: "", id: -1),
+                      ward: Region(name: "", id: -1),
+                      regionTextFormat: "");
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ReciverInfo(
-                        addressData: AddressData(
-                            addressID: "",
-                            deviceID: deviceID,
-                            reciverFullName: "",
-                            phoneNumber: "",
-                            houseNumber: "",
-                            region: Region(name: "", id: -1),
-                            district: Region(name: "", id: -1),
-                            ward: Region(name: "", id: -1),
-                            regionTextFormat: ""),
+                        addressData: addressData,
+                        done: () {
+                          String id = generateID();
+                          listAddressData.listAddress[id] = addressData;
+                          updateListAddress();
+                        },
+                        delete: () {},
+                        isEdit: false,
                       ),
                     ),
                   );

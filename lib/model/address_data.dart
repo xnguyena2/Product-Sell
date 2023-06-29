@@ -5,17 +5,16 @@ class ListAddressData {
     required this.listAddress,
   });
 
-  late final List<AddressData> listAddress;
+  late final Map<String, AddressData> listAddress;
 
   ListAddressData.fromJson(Map<String, dynamic> json) {
-    listAddress = List.from(json['list_address'])
-        .map((e) => AddressData.fromJson(e))
-        .toList();
+    listAddress = Map.from(json['list_address']).map((key, value) =>
+        MapEntry<String, AddressData>(key, AddressData.fromJson(value)));
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
-    _data['list_address'] = listAddress.map((e) => e.toJson()).toList();
+    _data['list_address'] = listAddress;
     return _data;
   }
 }
