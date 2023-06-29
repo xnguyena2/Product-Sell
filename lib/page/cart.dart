@@ -19,6 +19,7 @@ import '../model/product_package.dart';
 import 'address_select.dart';
 import 'component/address_item.dart';
 import 'product_detail.dart';
+import 'thankfull.dart';
 
 class Cart extends StatefulWidget {
   final PackageResult? buyPackage;
@@ -115,15 +116,23 @@ class _CartState extends State<Cart> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: package != null
-                          ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Cart(
-                                          buyPackage: buyPackage,
-                                        )),
-                              );
-                            }
+                          ? isCheckOut
+                              ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ThankFull()),
+                                  );
+                                }
+                              : () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Cart(
+                                              buyPackage: buyPackage,
+                                            )),
+                                  );
+                                }
                           : null,
                       style: ElevatedButton.styleFrom(
                         elevation: 0.0,

@@ -112,9 +112,9 @@ class BeerSubmitData {
 
   BeerSubmitData.fromJson(Map<String, dynamic> json) {
     beerSecondID = json['beerSecondID'];
-    name = json['name'];
-    detail = json['detail'];
-    category = json['category'];
+    name = json['name'] ?? "";
+    detail = json['detail'] ?? "";
+    category = json['category'] ?? "";
     status = json['status'];
     images = json['images'] == null
         ? null

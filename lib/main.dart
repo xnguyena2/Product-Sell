@@ -34,8 +34,8 @@ void getDeviceID() {
     device_id = "1687247699000";
     box.put('deviceID', device_id);
   }
-  box.delete(hiveListAddressID);
-  box.delete(hiveDefaultAddressID);
+  // box.delete(hiveListAddressID);
+  // box.delete(hiveDefaultAddressID);
   print('device id: $device_id');
   print(DateTime.now().millisecondsSinceEpoch);
   deviceID = device_id;
