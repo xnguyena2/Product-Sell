@@ -25,7 +25,10 @@ class _ThankFullState extends State<ThankFull> {
           appBar: BackAppBar(),
           backgroundColor: backgroundColor,
           body: Center(
-            child: Text('Cảm ơn bạn!'),
+            child: Text(
+              'Cảm ơn bạn đã mua sản phẩm!',
+              style: TextStyle(fontSize: 18),
+            ),
           )),
     );
   }
