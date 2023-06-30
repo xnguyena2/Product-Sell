@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
   void loadMore() {
     loading = true;
     setState(() {});
-    currentPage;
+    currentPage++;
     fetchMoreResult(currentPage).then((value) {
       List<Products> moreProduct = value.result;
       noMore = moreProduct.isEmpty;
