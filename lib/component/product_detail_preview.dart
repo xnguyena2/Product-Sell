@@ -101,7 +101,15 @@ class ProductDetailPreview extends StatelessWidget {
                 //   ],
                 // ),
                 Expanded(
-                  child: ImageLoading(url: productImageUrl),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: FittedBox(
+                      clipBehavior: Clip.hardEdge,
+                      fit: BoxFit.cover,
+                      child: ImageLoading(url: productImageUrl),
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5.0),

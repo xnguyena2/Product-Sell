@@ -323,10 +323,29 @@ BootStrap bootStrapDebugValue() {
   return BootStrap.fromJson(dbVal);
 }
 
-final List<CategoryIteam> listCategory = List.generate(
-        6,
-        (index) => CategoryIteam(
-            category: "category$index",
-            title: "Đồ uống loại $index",
-            imageUrl: "https://cdn-icons-png.flaticon.com/512/988/988934.png"))
-    .toList();
+final List<CategoryIteam> listCategory = [
+  CategoryIteam(
+      category: "",
+      title: "Bia",
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/1529/1529437.png'),
+  CategoryIteam(
+      category: "",
+      title: "Rựu",
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/1070/1070794.png'),
+  CategoryIteam(
+      category: "",
+      title: "Đồ uống không ga",
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/3510/3510693.png'),
+  CategoryIteam(
+      category: "",
+      title: "Nước ngọt",
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776162.png'),
+  CategoryIteam(
+      category: "",
+      title: "Nhập Ngoại",
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/9264/9264962.png'),
+  CategoryIteam(
+      category: "",
+      title: "Rẻ tiền",
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/2298/2298775.png'),
+];
