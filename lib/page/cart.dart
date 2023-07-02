@@ -36,7 +36,7 @@ class _CartState extends State<Cart> {
   late bool isCheckOut;
 
   final Order orderDetail = Order(
-    preOrder: true,
+    preOrder: false,
     packageOrder: PackageOrder(
         userDeviceId: deviceID,
         reciverAddress: "",

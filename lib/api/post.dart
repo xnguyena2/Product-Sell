@@ -142,7 +142,7 @@ Future<OrderResult> createOrder(Order order) async {
   );
 
   if (response.statusCode == 200) {
-    print(response.body);
+    // print(response.body);
     return OrderResult.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
   } else {
     throw Exception('Failed to load data');
