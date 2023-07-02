@@ -4,9 +4,9 @@ class Order {
     required this.packageOrder,
     required this.beerOrders,
   });
-  late final bool preOrder;
-  late final PackageOrder packageOrder;
-  late final List<BeerOrders> beerOrders;
+  late bool preOrder;
+  late PackageOrder packageOrder;
+  late List<BeerOrders> beerOrders;
 
   Order.fromJson(Map<String, dynamic> json) {
     preOrder = json['preOrder'];
@@ -38,12 +38,12 @@ class PackageOrder {
     required this.shipPrice,
   });
   late final String userDeviceId;
-  late final String reciverAddress;
-  late final int regionId;
-  late final int districtId;
-  late final int wardId;
-  late final String reciverFullname;
-  late final String phoneNumber;
+  late String reciverAddress;
+  late int regionId;
+  late int districtId;
+  late int wardId;
+  late String reciverFullname;
+  late String phoneNumber;
   late final int totalPrice;
   late final int shipPrice;
 

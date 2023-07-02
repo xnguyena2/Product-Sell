@@ -103,6 +103,7 @@ class _AddressSelectorState extends State<AddressSelector> {
                           selectedAddress = data;
                           updateSelectedAddress(key);
                           setState(() {});
+                          Navigator.pop(context);
                         },
                         enableDivider:
                             index < listAddressData.listAddress.length - 1,

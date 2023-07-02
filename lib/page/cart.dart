@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../api/get.dart';
 import '../constants.dart';
 import '../global/app_state.dart';
+import '../model/package_order.dart';
 import '../model/package_result.dart';
 import '../model/product_package.dart';
 import 'address_select.dart';
@@ -33,6 +34,21 @@ class _CartState extends State<Cart> {
   final oCcy = NumberFormat("#,##0", "en_US");
   final PackageResult buyPackage = PackageResult(listResult: []);
   late bool isCheckOut;
+
+  final Order orderDetail = Order(
+    preOrder: true,
+    packageOrder: PackageOrder(
+        userDeviceId: deviceID,
+        reciverAddress: "",
+        regionId: 0,
+        districtId: 0,
+        wardId: 0,
+        reciverFullname: "",
+        phoneNumber: "",
+        totalPrice: 0,
+        shipPrice: 0),
+    beerOrders: [],
+  );
 
   @override
   void initState() {
@@ -118,19 +134,43 @@ class _CartState extends State<Cart> {
                       onPressed: package != null
                           ? isCheckOut
                               ? () {
+                                  orderDetail.beerOrders = buyPackage.listResult
+                                      .map(
+                                        (e) => BeerOrders(
+                                          beerOrder: BeerOrder(
+                                              beerSecondId: e.beerId,
+                                              voucherSecondId: "",
+                                              totalPrice: 0,
+                                              shipPrice: 0),
+                                          beerUnitOrders: [
+                                            BeerUnitOrders(
+                                                beerSecondId: e.beerId,
+                                                beerUnitSecondId: e.beerUnit,
+                                                numberUnit: e.numberUnit,
+                                                price: 0,
+                                                totalDiscount: 0)
+                                          ],
+                                        ),
+                                      )
+                                      .toList();
+                                  final result = createOrder(orderDetail);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ThankFull()),
+                                      builder: (context) => ThankFull(
+                                        orderResult: result,
+                                      ),
+                                    ),
                                   );
                                 }
                               : () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Cart(
-                                              buyPackage: buyPackage,
-                                            )),
+                                      builder: (context) => Cart(
+                                        buyPackage: buyPackage,
+                                      ),
+                                    ),
                                   );
                                 }
                           : null,
@@ -224,6 +264,14 @@ class _CartState extends State<Cart> {
                               return addNewAddress(context);
                             }
 
+                            orderDetail.packageOrder
+                              ..regionId = addressData.region.id
+                              ..districtId = addressData.district.id
+                              ..wardId = addressData.ward.id
+                              ..phoneNumber = addressData.phoneNumber
+                              ..reciverFullname = addressData.reciverFullName
+                              ..reciverAddress = addressData.houseNumber;
+
                             return AddressItem(
                               groupValue: '',
                               label: 'Địa Chỉ Nhận Hàng',
@@ -231,7 +279,8 @@ class _CartState extends State<Cart> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => AddressSelector(),
+                                    builder: (context) =>
+                                        const AddressSelector(),
                                   ),
                                 );
                               },
