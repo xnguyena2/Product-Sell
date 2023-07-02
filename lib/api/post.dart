@@ -4,7 +4,9 @@ import 'package:http/http.dart';
 
 import '../constants.dart';
 import '../model/boostrap.dart';
+import '../model/order_result.dart';
 import '../model/package_item_remove.dart';
+import '../model/package_order.dart';
 import '../model/package_result.dart';
 import '../model/product_package.dart';
 import '../model/response.dart';
@@ -123,6 +125,25 @@ Future<dynamic> deleteItemFromPackage(ProductPackage productPackage) async {
   if (response.statusCode == 200) {
     // print(response.body);
     return jsonDecode(utf8.decode(response.bodyBytes));
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
+
+Future<OrderResult> createOrder(Order order) async {
+  Map<String, String> headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+
+  final response = await post(
+    Uri.parse('${host}/order/create'),
+    body: jsonEncode(order),
+    headers: headers,
+  );
+
+  if (response.statusCode == 200) {
+    print(response.body);
+    return OrderResult.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
   } else {
     throw Exception('Failed to load data');
   }
