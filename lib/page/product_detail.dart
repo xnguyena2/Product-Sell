@@ -802,7 +802,11 @@ class _ProductDetailState extends State<ProductDetail>
                 : const BoxShadow(),
           ],
         ),
-        child: ImageLoading(url: url),
+        child: ClipRRect(
+          clipBehavior: Clip.hardEdge,
+          borderRadius: BorderRadius.circular(10),
+          child: ImageLoading(url: url),
+        ),
       ),
     );
   }
