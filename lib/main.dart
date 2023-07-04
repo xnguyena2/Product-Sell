@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'constants.dart';
+import 'firebase_options.dart';
 import 'global/app_state.dart';
 import 'entry_point.dart';
 import 'my_custom_scroll_behavior.dart';
@@ -18,13 +21,50 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
+void setToken(String? token) {
+  print('FCM Token: $token');
+}
+
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   await Hive.initFlutter();
   await Hive.openBox(hiveSettingBox);
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  messaging
+      .requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  )
+      .then((settings) {
+    print('User granted permission: ${settings.authorizationStatus}');
+  });
+
+  // await messaging.setAutoInitEnabled(true);
+  messaging.getToken().then(setToken);
+  // vapidKey:
+  //     'BNi5iH-N5Z2OX_GoueEbzDNBXMYOsAag3XRsi5Y-MMOM8gX3mdbS5hWHgLNPJzXTWszeB2N7vebq5CX1h6xtH2M');
+
+  messaging.onTokenRefresh.listen(setToken).onError((err) {
+    print(err);
+  });
+
   getDeviceID();
   runApp(const MyApp());
 }
+
+Future<void> setupInteractedMessage() async {}
 
 void getDeviceID() {
   var box = Hive.box(hiveSettingBox);
