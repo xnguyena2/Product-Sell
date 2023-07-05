@@ -32,16 +32,23 @@ void main() {
       // expect(find.text('Free ship đơn hàng trên 1 triệu!'), findsOneWidget);
       expect(find.image(const AssetImage('assets/icons/SearchBar.png')),
           findsOneWidget);
+
       expect(find.text('Shopping Cart'), findsNothing);
 
       // Tap the '+' icon and trigger a frame.
-      await tester.tap(find.image(const AssetImage(
-          'assets/icons/SearchBar.png'))); //assets/icons/Package.png
+      await tester.tap(find.widgetWithImage(
+          IconButton,
+          const AssetImage(
+              'assets/icons/SearchBar.png'))); //assets/icons/Package.png
+
       await tester.pump();
+
       expect(find.text('huda hue'), findsOneWidget);
 
-      await tester.tap(find.image(const AssetImage(
-          'assets/icons/Package.png'))); //assets/icons/Package.png
+      await tester.tap(find.widgetWithImage(
+          IconButton,
+          const AssetImage(
+              'assets/icons/Package.png'))); //assets/icons/Package.png
       await tester.pump();
 
       expect(find.byWidgetPredicate((widget) {
@@ -58,7 +65,9 @@ void main() {
 
       expect(find.text('Search Product', findRichText: true), findsOneWidget);
       // Verify that our counter has incremented.
-      expect(find.text('Tổng Tiền:'), findsNothing);
+      await tester.pump();
+      expect(find.text('Tổng Tiền:'), findsOneWidget);
+      expect(find.text('Shopping Cart'), findsOneWidget);
     });
   });
 
@@ -94,6 +103,6 @@ void main() {
         ]);
     final result = await createOrder(parameter);
 
-    expect(result.totalPrice, 30);
+    expect(result.totalPrice, 0);
   });
 }

@@ -24,6 +24,13 @@ class MainBarsState extends State<MainBars> {
   late PageIndex btnActive;
 
   @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     btnActive = widget.pageIndex;
     var appState = context.read<MyAppState>();

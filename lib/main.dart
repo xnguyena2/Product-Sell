@@ -30,11 +30,18 @@ Future<void> main() async {
   await Hive.initFlutter();
   await Hive.openBox(hiveSettingBox);
 
+  getDeviceID();
+
+  setupInteractedMessage();
+
+  runApp(const MyApp());
+}
+
+Future<void> setupInteractedMessage() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   messaging
@@ -59,12 +66,7 @@ Future<void> main() async {
   messaging.onTokenRefresh.listen(setToken).onError((err) {
     print(err);
   });
-
-  getDeviceID();
-  runApp(const MyApp());
 }
-
-Future<void> setupInteractedMessage() async {}
 
 void getDeviceID() {
   var box = Hive.box(hiveSettingBox);
