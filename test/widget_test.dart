@@ -11,6 +11,7 @@ import 'package:product_sell/api/post.dart';
 import 'package:product_sell/constants.dart';
 
 import 'package:product_sell/main.dart';
+import 'package:product_sell/model/fcm_token.dart';
 import 'package:product_sell/model/order_result.dart';
 import 'package:product_sell/model/package_order.dart';
 import 'dart:io';
@@ -104,5 +105,16 @@ void main() {
     final result = await createOrder(parameter);
 
     expect(result.totalPrice, 0);
+  });
+
+  test('device sumit fcm token', () async {
+    init();
+    final parameter = FCMToken(
+      deviceId: "1687247699000",
+      fcmId: "hello",
+    );
+    final result = await submitFCMToken(parameter);
+
+    expect(result, "");
   });
 }

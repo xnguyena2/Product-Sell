@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'api/post.dart';
 import 'constants.dart';
 import 'firebase_options.dart';
 import 'global/app_state.dart';
 import 'entry_point.dart';
+import 'model/fcm_token.dart';
 import 'my_custom_scroll_behavior.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -23,6 +25,13 @@ class MyHttpOverrides extends HttpOverrides {
 
 void setToken(String? token) {
   print('FCM Token: $token');
+  if (token != null) {
+    final parameter = FCMToken(
+      deviceId: deviceID,
+      fcmId: token,
+    );
+    submitFCMToken(parameter);
+  }
 }
 
 Future<void> main() async {
@@ -37,6 +46,24 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+@pragma('vm:entry-point')
+void _handleMessage(RemoteMessage message) {
+  print('new msg');
+  print(message);
+  if (message.data['type'] == 'chat') {}
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await setupFlutterNotifications();
+  // showFlutterNotification(message);
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  print('Handling a background message ${message.messageId}');
+}
+
+@pragma('vm:entry-point')
 Future<void> setupInteractedMessage() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -66,6 +93,23 @@ Future<void> setupInteractedMessage() async {
   messaging.onTokenRefresh.listen(setToken).onError((err) {
     print(err);
   });
+
+  // Get any messages which caused the application to open from
+  // a terminated state.
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+
+  // If the message also contains a data property with a "type" of "chat",
+  // navigate to a chat screen
+  if (initialMessage != null) {
+    _handleMessage(initialMessage);
+  }
+
+  // Also handle any interaction when the app is in the background via a
+  // Stream listener
+  FirebaseMessaging.onMessage.listen(_handleMessage);
+  FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 }
 
 void getDeviceID() {

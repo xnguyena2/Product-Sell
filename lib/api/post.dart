@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 
 import '../constants.dart';
 import '../model/boostrap.dart';
+import '../model/fcm_token.dart';
 import '../model/order_result.dart';
 import '../model/package_item_remove.dart';
 import '../model/package_order.dart';
@@ -144,6 +145,25 @@ Future<OrderResult> createOrder(Order order) async {
   if (response.statusCode == 200) {
     // print(response.body);
     return OrderResult.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
+
+Future<String> submitFCMToken(FCMToken fcmToken) async {
+  Map<String, String> headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+
+  final response = await post(
+    Uri.parse('${host}/fcmtoken/create'),
+    body: jsonEncode(fcmToken),
+    headers: headers,
+  );
+
+  if (response.statusCode == 200) {
+    // print(response.body);
+    return response.body;
   } else {
     throw Exception('Failed to load data');
   }
