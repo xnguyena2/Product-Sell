@@ -2,15 +2,13 @@ importScripts("https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"
 importScripts("https://www.gstatic.com/firebasejs/9.10.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-    apiKey: 'AIzaSyB7wZb2tO1-Fs6GbDADUSTs2Qs3w08Hovw',
-    appId: '1:406099696497:web:87e25e51afe982cd3574d0',
-    messagingSenderId: '406099696497',
-    projectId: 'flutterfire-e2e-tests',
-    authDomain: 'flutterfire-e2e-tests.firebaseapp.com',
-    databaseURL:
-        'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'flutterfire-e2e-tests.appspot.com',
-    measurementId: 'G-JN95N1JV2E',
+    apiKey: 'AIzaSyBd2e0R9d6R9E98rXIznGyWfbuTAhWXcJQ',
+    appId: '1:863872732054:web:4d252ff4eb42cd8530abb7',
+    messagingSenderId: '863872732054',
+    projectId: 'trumbien',
+    authDomain: 'trumbien.firebaseapp.com',
+    storageBucket: 'trumbien.appspot.com',
+    measurementId: 'G-EWD941CVYQ',
 });
 // Necessary to receive background messages:
 const messaging = firebase.messaging();
