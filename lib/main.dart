@@ -70,6 +70,7 @@ void _handleMessage(RemoteMessage message) {
   print('Message data: ${message.data}');
   print(message);
   if (message.data['type'] == 'chat') {}
+  showFlutterNotification(message);
 }
 
 @pragma('vm:entry-point')
